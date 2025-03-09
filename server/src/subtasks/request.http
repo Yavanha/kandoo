@@ -1,0 +1,33 @@
+### SubTasks API Requests
+### variable
+@url = http://localhost:5000/api/subtasks
+@contentType = application/json
+
+
+### Get All SubTasks
+GET {{ url }}
+
+### Create new SubTask
+# @name CreateSubTask
+POST {{ url }}
+Content-Type: {{contentType}}
+
+{
+  "title": "SubTask 3"
+}
+
+### Set Subtask as id
+@subtaskId = {{ CreateSubTask.response.body.id }}
+
+
+### Get SubTask by ID
+GET {{ url }}/{{ subtaskId }}
+
+### Make a SubTask as completed
+PATCH {{ url }}/{{ subtaskId }}
+Content-Type: {{contentType}}
+
+{
+  "title": "SubTask 5",
+  "isCompleted": false
+}

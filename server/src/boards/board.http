@@ -1,0 +1,41 @@
+### Boards API Requests
+### variable
+@url = http://localhost:5000/api/boards
+@contentType = application/json
+
+
+### Get All Boards
+GET {{ url }}
+
+### Create new Board
+# @name CreateBoard
+POST {{ url }}
+Content-Type: {{contentType}}
+
+{
+  "name": "Platform Launch",
+}
+
+### Set Board as id
+@boardId = {{ CreateBoard.response.body.id }}
+### Set Columns Board
+@firstColumnId = {{ CreateBoard.response.body.columns.0.id }}
+@secondColumnId = {{ CreateBoard.response.body.columns.1.id }}
+
+
+### Get Board by ID
+GET {{ url }}/{{ boardId }}
+
+### Make a Board as completed
+PATCH {{ url }}/{{ boardId }}
+Content-Type: {{contentType}}
+
+{
+  "name": "Board 50",
+  "columns": [
+
+  ]
+}
+
+### Delete Board
+DELETE {{ url }}/{{ boardId }}

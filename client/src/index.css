@@ -1,0 +1,66 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --breakpoint-sm: 375px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1440px;
+
+  --color-primary: hsl(242, 48%, 58%);
+  --color-primary-10: hsla(242, 48%, 58%, 0.1);
+  --color-primary-hover: hsl(243, 100%, 82%);
+  --color-secondary: hsla(242, 48%, 58%, 0.1);
+  --color-secondary-hover: hsla(242, 48%, 58%, 0.25);
+  --color-destructive: hsl(0, 78%, 63%);
+
+  --color-black: hsla(237, 100%, 4%, 1);
+  /* dark theme */
+  --color-very-dark-grey: hsl(235, 16%, 15%);
+  --color-dark-grey: hsl(235, 12%, 19%);
+  --color-lines-dark: hsl(236, 11%, 27%);
+
+  --color-medium-grey: hsl(216, 15%, 57%);
+  --color-medium-grey-25: hsla(216, 15%, 57%, 0.25);
+
+  /* light theme */
+  --color-lines-light: hsl(221, 69%, 94%);
+  --color-light-grey: hsl(220, 69%, 97%);
+
+  --color-white: hsla(0, 0%, 100%, 1);
+
+  --background-light: hsl(220, 69%, 97%);
+  --font-jakarta: "Plus Jakarta Sans", sans-serif;
+}
+
+@layer components {
+  /* Heading Styles */
+
+  body {
+    @apply font-jakarta;
+    @apply bg-light-grey;
+  }
+  .heading-xl {
+    @apply font-jakarta font-bold text-[24px] leading-[30px];
+  }
+
+  .heading-l {
+    @apply font-jakarta font-bold text-[18px] leading-[23px];
+  }
+
+  .heading-m {
+    @apply font-jakarta font-bold text-[15px] leading-[19px];
+  }
+
+  .heading-s {
+    @apply font-jakarta font-bold text-[12px] leading-[15px] tracking-[2.4px];
+  }
+
+  /* Body Styles */
+  .body-l {
+    @apply font-jakarta font-medium text-[13px] leading-[23px];
+  }
+
+  .body-m {
+    @apply font-jakarta font-bold text-[12px] leading-[15px];
+  }
+}
