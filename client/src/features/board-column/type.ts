@@ -1,3 +1,4 @@
 export interface BoardColumn {
-  name: string;
+  id: string;
+  title: string;
 }

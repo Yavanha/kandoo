@@ -2,6 +2,10 @@ import { Input, Label } from "@/components";
 import { Dialog, Form } from "radix-ui";
 import { FC } from "react";
 import { useCreateNewBoard } from "./hook";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { post } from "@/helpers/api-helpers";
+import { Board } from "./type";
+import { GET_BOARDS } from "./queries";
 
 type CreateNewBoardDialogProps = {
   isOpen: boolean;
@@ -20,6 +24,25 @@ export const CreateNewBoardDialog: FC<CreateNewBoardDialogProps> = ({
     changeBoardNameHandler,
     deleteColumnHandler,
   } = useCreateNewBoard();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (data: Partial<Board>) => {
+      return await post("/boards", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [GET_BOARDS] });
+    },
+  });
+
+  const submitFormHandler: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    mutation.mutate({
+      name: boardName,
+      columns,
+    });
+  };
+
   return (
     <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
       <Dialog.Portal container={document.getElementById("root")}>
@@ -28,7 +51,7 @@ export const CreateNewBoardDialog: FC<CreateNewBoardDialogProps> = ({
           <Dialog.Title className="mb-6 heading-l font-medium text-mauve12">
             Add New Board
           </Dialog.Title>
-          <Form.Root>
+          <Form.Root onSubmit={submitFormHandler}>
             <Form.Field name="boardName" className="mb-6">
               <Form.Label asChild>
                 <Label label="Board Name" />
@@ -53,7 +76,7 @@ export const CreateNewBoardDialog: FC<CreateNewBoardDialogProps> = ({
                     <Form.Field
                       name="title"
                       className="flex items-center mb-3 gap-x-4"
-                      key={column.id ?? `column-${index}`}
+                      key={`column-${index}`}
                     >
                       <Form.Control asChild>
                         <Input
@@ -86,7 +109,7 @@ export const CreateNewBoardDialog: FC<CreateNewBoardDialogProps> = ({
               </div>
             </Form.Field>
             <button
-              type="button"
+              type="submit"
               className="text-white body-l bg-primary w-full p-2 rounded-full"
             >
               Create New Board

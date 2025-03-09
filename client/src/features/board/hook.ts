@@ -1,19 +1,11 @@
 import { useState } from "react";
+import { BoardColumn } from "../board-column";
 
-export const useCreateNewBoard = (
-  source = [
-    { id: "todo", title: "Todo" },
-    { id: "doing", title: "Doing" },
-    { id: "done", title: "Done" },
-  ]
-) => {
+export const useCreateNewBoard = () => {
   const [boardName, setBoardName] = useState("boardName");
   const [columns, setColumns] = useState<
-    {
-      id?: string;
-      title: string;
-    }[]
-  >(source);
+    (Pick<BoardColumn, "title"> | BoardColumn)[]
+  >([]);
 
   const addNewColumnHandler = () => {
     setColumns((prev) => [...prev, { title: "new" }]);
