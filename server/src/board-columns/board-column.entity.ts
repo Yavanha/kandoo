@@ -7,7 +7,7 @@ import { Column, Entity, Index, ManyToOne, Unique } from 'typeorm';
 export class BoardColumn extends BaseEntity {
   @Column({
     type: 'varchar',
-    length: 50,
+    length: 20,
     nullable: false,
   })
   title: string;

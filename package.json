@@ -9,9 +9,10 @@
   ],
   "scripts": {
     "build": "pnpm --filter client build && pnpm --filter server build && pnpm --filter shared build",
+    "build:shared": "pnpm --filter shared build",
     "start:client": "pnpm --filter client dev",
     "start:server": "pnpm --filter server run start:dev",
-    "start": "concurrently \"pnpm run start:client\" \"pnpm run start:server\""
+    "start": "concurrently \"pnpm run build:shared\" \"pnpm run start:client\" \"pnpm run start:server\""
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

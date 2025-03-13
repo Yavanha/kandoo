@@ -10,9 +10,9 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as IndexImport } from './routes/index'
-import { Route as BoardsIndexImport } from './routes/boards/index'
+import { Route as rootRoute } from './core/routes/__root'
+import { Route as IndexImport } from './core/routes/index'
+import { Route as BoardsIndexImport } from './core/routes/boards/index'
 
 // Create/Update Routes
 
@@ -26,7 +26,9 @@ const BoardsIndexRoute = BoardsIndexImport.update({
   id: '/boards/',
   path: '/boards/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/boards/index.lazy').then((d) => d.Route))
+} as any).lazy(() =>
+  import('./core/routes/boards/index.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
