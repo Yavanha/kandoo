@@ -6,7 +6,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 export class Board extends BaseEntity {
   @Column({
     type: 'varchar',
-    length: 50,
+    length: 20,
     nullable: false,
     unique: true,
   })

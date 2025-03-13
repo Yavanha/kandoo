@@ -7,11 +7,12 @@
   --breakpoint-lg: 1440px;
 
   --color-primary: hsl(242, 48%, 58%);
-  --color-primary-10: hsla(242, 48%, 58%, 0.1);
   --color-primary-hover: hsl(243, 100%, 82%);
   --color-secondary: hsla(242, 48%, 58%, 0.1);
   --color-secondary-hover: hsla(242, 48%, 58%, 0.25);
   --color-destructive: hsl(0, 78%, 63%);
+  --color-destructive-25: hsl(0, 78%, 63%, 0.25);
+  --color-destructive-hover: hsl(0, 100%, 80%);
 
   --color-black: hsla(237, 100%, 4%, 1);
   /* dark theme */

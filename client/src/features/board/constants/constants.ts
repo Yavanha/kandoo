@@ -1,0 +1,1 @@
+export const GET_BOARDS_CACHE_KEY = "GET_BOARD";

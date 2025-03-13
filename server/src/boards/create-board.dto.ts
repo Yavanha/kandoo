@@ -11,7 +11,7 @@ import { CreateBoardColumnDto } from 'src/board-columns/create-board-column.dto'
 export class CreateBoardDto {
   @IsString()
   @IsNotEmpty()
-  @MaxLength(50)
+  @MaxLength(20)
   name: string;
 
   @IsOptional()
