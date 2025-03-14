@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Board, CreateBoardFields } from "../types";
+import { Board, BoardFields } from "../types";
 import { post } from "@/core/api";
 import { GET_BOARDS_CACHE_KEY } from "../constants/constants";
 import { AxiosError } from "axios";
@@ -11,11 +11,11 @@ export const useCreateBoard = () => {
   const mutation = useMutation<
     Board,
     AxiosError<AxioResponsError>,
-    CreateBoardFields,
+    BoardFields,
     unknown
   >({
-    mutationFn: async (data: CreateBoardFields) => {
-      return await post<Board, CreateBoardFields>("/boards", data);
+    mutationFn: async (data: BoardFields) => {
+      return await post<Board, BoardFields>("/boards", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [GET_BOARDS_CACHE_KEY] });

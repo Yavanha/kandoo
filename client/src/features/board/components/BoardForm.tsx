@@ -2,18 +2,34 @@ import { Form } from "radix-ui";
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { CreateBoardFields } from "../types";
+import { BoardFields } from "../types";
 import { boardSchema } from "../schema";
 import { Button, Input, Label } from "@/core/desing-system";
 import { TextField } from "@/core/components";
 import { useCreateBoard } from "../hooks/useCreateBoards";
 import { FC } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
+import {
+  activeBoardAtom,
+  boardFormModeAtom,
+  isOpenBoardDialogAtom,
+} from "../store/atoms";
 
-type BoardForm = {
-  onCloseDialog: () => void;
-};
+export const BoardForm: FC = () => {
+  const boardFormMode = useAtomValue(boardFormModeAtom);
 
-export const BoardForm: FC<BoardForm> = ({ onCloseDialog }) => {
+  const activeBoard = useAtomValue(activeBoardAtom);
+
+  const submitLabel =
+    boardFormMode === "EDIT" ? "Save changes" : "Create New Board";
+
+  const defaultValues =
+    boardFormMode === "EDIT"
+      ? { ...activeBoard }
+      : {
+          name: "",
+          columns: [],
+        };
   const {
     handleSubmit,
     register,
@@ -21,30 +37,33 @@ export const BoardForm: FC<BoardForm> = ({ onCloseDialog }) => {
     trigger,
     setError,
     reset,
-    formState: { errors, isSubmitting, isValid },
-  } = useForm<CreateBoardFields>({
-    defaultValues: {
-      name: "",
-      columns: [],
-    },
+    formState: { errors, isSubmitting, isValid, isDirty },
+  } = useForm<BoardFields>({
+    defaultValues,
     mode: "onChange",
     resolver: zodResolver(boardSchema),
   });
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "columns",
   });
+
   const { createBoardMutation } = useCreateBoard();
-  const onSubmit: SubmitHandler<CreateBoardFields> = async (
-    createBoardData
-  ) => {
+  const setIsOpenBoardDialogAtom = useSetAtom(isOpenBoardDialogAtom);
+
+  const onSubmit: SubmitHandler<BoardFields> = async (createBoardData) => {
+    if (createBoardData.id) {
+      console.log(createBoardData);
+      return;
+    }
     createBoardMutation.mutate(createBoardData, {
       onSuccess: () => {
         reset({
           name: "",
           columns: [],
         });
-        onCloseDialog();
+        setIsOpenBoardDialogAtom(false);
       },
       onError: (error) => {
         const errorData = error.response?.data;
@@ -56,6 +75,10 @@ export const BoardForm: FC<BoardForm> = ({ onCloseDialog }) => {
       },
     });
   };
+  if (boardFormMode === "DELETE") {
+    return <p>delete</p>;
+  }
+
   return (
     <Form.Root onSubmit={handleSubmit(onSubmit)}>
       <Label label="Board Name" hasError={!!errors.name} />
@@ -70,27 +93,22 @@ export const BoardForm: FC<BoardForm> = ({ onCloseDialog }) => {
                 className="mb-3"
                 key={`${field.title}-${index}`}
               >
-                <Form.Control asChild>
-                  <div className="flex items-center  gap-x-4">
-                    <Input
-                      placeholder="e.g. Todo"
-                      {...register(`columns.${index}.title`, {
-                        onChange: () => trigger(`columns.${index}.title`),
-                      })}
-                      hasError={!!(errors.columns && errors.columns[index])}
-                    />
-                    <button
-                      type="button"
-                      className="cursor-pointer"
-                      onClick={() => remove(index)}
-                    >
-                      <img
-                        src="/icons/icon-cross.svg"
-                        className="inline-block"
-                      />
-                    </button>
-                  </div>
-                </Form.Control>
+                <div className="flex items-center  gap-x-4">
+                  <Input
+                    placeholder="e.g. Todo"
+                    {...register(`columns.${index}.title`, {
+                      onChange: () => trigger(`columns.${index}.title`),
+                    })}
+                    hasError={!!(errors.columns && errors.columns[index])}
+                  />
+                  <button
+                    type="button"
+                    className="cursor-pointer"
+                    onClick={() => remove(index)}
+                  >
+                    <img src="/icons/icon-cross.svg" className="inline-block" />
+                  </button>
+                </div>
 
                 {errors.columns && errors.columns[index] && (
                   <Form.Message className="text-destructive body-m">
@@ -113,9 +131,9 @@ export const BoardForm: FC<BoardForm> = ({ onCloseDialog }) => {
         type="submit"
         security="primary"
         severity="primary"
-        disabled={!isValid}
+        disabled={!isValid || !isDirty}
       >
-        {isSubmitting ? "..." : "Create New Board"}
+        {isSubmitting ? "..." : submitLabel}
       </Button>
       {errors.root && (
         <p className="text-destructive body-m ">{errors.root.message}</p>

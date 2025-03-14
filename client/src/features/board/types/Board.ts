@@ -8,4 +8,6 @@ export interface Board {
   columns: BoardColumn[];
 }
 
-export type CreateBoardFields = z.infer<typeof boardSchema>;
+export type BoardFields = z.infer<typeof boardSchema>;
+
+export type BoardActionMode = "CREATE" | "EDIT" | "DELETE";

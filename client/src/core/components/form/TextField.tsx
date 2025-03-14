@@ -16,9 +16,7 @@ export const TextField = <T extends FieldValues>(
 
   return (
     <Form.Field name={field.name} className="mb-6">
-      <Form.Control asChild>
-        <Input placeholder="e.g. Web Design" {...field} hasError={!!error} />
-      </Form.Control>
+      <Input placeholder="e.g. Web Design" {...field} hasError={!!error} />
       {error && (
         <Form.Message className="text-destructive body-m">
           {error.message}

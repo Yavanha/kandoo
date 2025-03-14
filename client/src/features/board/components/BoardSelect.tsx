@@ -1,41 +1,36 @@
-import { FC, useMemo, useState } from "react";
-import { useBoardStore } from "../store/board.store";
+import { FC, useMemo } from "react";
 import { Board } from "../types";
 import { Select } from "@/core/desing-system";
-import { ThemeSwitch } from "@/core/components";
-import { BoardTriggerDialogForm } from "./BoardTriggerDialogForm";
-
+import { useAtom, useSetAtom } from "jotai";
+import { useHydrateAtoms } from "jotai/utils";
+import {
+  activeBoardAtom,
+  isOpenBoardSelectAtom,
+  triggerCreateFormDialogAtom,
+} from "../store/atoms";
+import { ThemeSwitch, DialogTrigger } from "@/core/components";
 type SelectBoardProps = {
   boards: Board[];
 };
 
 export const BoardSelect: FC<SelectBoardProps> = ({ boards }) => {
-  const activeBoard = useBoardStore((state) => state.activeBoard);
-  const setActiveBoard = useBoardStore((state) => state.setActiveBoard);
-  const [isSelectOpen, setIsSelectOpen] = useState(false);
-  const [isDialogFormOpen, setIsDialogFormOpen] = useState(false);
+  const [activeBoard, setActiveBoard] = useAtom(activeBoardAtom);
+
+  const triggerCreateFormDialog = useSetAtom(triggerCreateFormDialogAtom);
+  const [isOpenBoardSelect, setIsOpenBoardSelect] = useAtom(
+    isOpenBoardSelectAtom
+  );
+  useHydrateAtoms([[activeBoardAtom, boards[0]]]);
+
+  const boardNames = useMemo(() => boards.map(({ name }) => name), [boards]);
+
   const selecteValudChangeHandler = (value: string) => {
     const selectedBoard = boards.find((board) => board.name === value);
     if (selectedBoard) {
       setActiveBoard(selectedBoard);
+      setIsOpenBoardSelect(false);
     }
   };
-
-  const triggerDialogHandler = (isOpenDialog: boolean) => {
-    setIsDialogFormOpen(isOpenDialog);
-    setIsSelectOpen(false);
-  };
-
-  const boardNames = useMemo(() => boards.map(({ name }) => name), [boards]);
-
-  if (!boards || boards.length === 0) {
-    return (
-      <BoardTriggerDialogForm
-        isOpenDialog={isDialogFormOpen}
-        onTrigger={triggerDialogHandler}
-      />
-    );
-  }
 
   return (
     <Select
@@ -43,14 +38,15 @@ export const BoardSelect: FC<SelectBoardProps> = ({ boards }) => {
       values={boardNames}
       placeholder="Select a board"
       onValueChange={selecteValudChangeHandler}
-      isOpen={isSelectOpen}
-      onOpenChange={() => setIsSelectOpen((prev) => !prev)}
+      isOpen={isOpenBoardSelect}
+      onOpenChange={setIsOpenBoardSelect}
     >
-      <BoardTriggerDialogForm
-        hasFlushEdges
-        isOpenDialog={isDialogFormOpen}
-        onTrigger={triggerDialogHandler}
-      />
+      <DialogTrigger hasFlushEdges openBoardDialog={triggerCreateFormDialog}>
+        <img src="/icons/icon-board.svg" alt="board icon" className="block" />
+        <p className="capitalize heading-m flex items-center gap-x-0.5 text-primary">
+          <span className="inline-block align-middle">+</span> Create New Board
+        </p>
+      </DialogTrigger>
       <ThemeSwitch />
     </Select>
   );
