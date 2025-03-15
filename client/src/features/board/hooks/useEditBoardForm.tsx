@@ -2,17 +2,15 @@ import { SubmitHandler, useForm, UseFormProps } from "react-hook-form";
 import { BoardFormType } from "../types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BoardSchema } from "../schema";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { activeBoardAtom, isOpenBoardDialogAtom } from "../store/atoms";
 import { useEditBoard } from "./useEditBoard";
-import { GET_BOARDS_CACHE_KEY } from "../constants/constants";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const useEditBoardForm = () => {
   const { updateBoardMutation } = useEditBoard();
-  const [activeBoard, setActiveBoard] = useAtom(activeBoardAtom);
+  const activeBoard = useAtomValue(activeBoardAtom);
   const setIsOpenDialog = useSetAtom(isOpenBoardDialogAtom);
-  const queryClient = useQueryClient();
+
   const formProps: UseFormProps<BoardFormType> = {
     defaultValues: {
       name: activeBoard?.name,
@@ -30,14 +28,12 @@ export const useEditBoardForm = () => {
         name: name,
       },
       {
-        onSuccess: (data) => {
+        onSuccess: () => {
           form.reset({
             name: activeBoard?.name,
             list: activeBoard?.columns,
           });
           setIsOpenDialog(false);
-          setActiveBoard(data);
-          queryClient.invalidateQueries({ queryKey: [GET_BOARDS_CACHE_KEY] });
         },
         onError: (error) => {
           const errorData = error.response?.data;

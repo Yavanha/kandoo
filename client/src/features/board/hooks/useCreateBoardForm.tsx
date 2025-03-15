@@ -4,15 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { BoardSchema } from "../schema";
 import { useCreateBoard } from "./useCreateBoard";
 import { useSetAtom } from "jotai";
-import { activeBoardAtom, isOpenBoardDialogAtom } from "../store/atoms";
-import { useQueryClient } from "@tanstack/react-query";
-import { GET_BOARDS_CACHE_KEY } from "../constants/constants";
+import { isOpenBoardDialogAtom } from "../store/atoms";
+// import { useQueryClient } from "@tanstack/react-query";
+// import { GET_BOARDS_CACHE_KEY } from "../constants/constants";
 
 export const useCreateBoardForm = () => {
   const { createBoardMutation } = useCreateBoard();
   const setIsOpenDialog = useSetAtom(isOpenBoardDialogAtom);
-  const queryClient = useQueryClient();
-  const setActiveBoard = useSetAtom(activeBoardAtom);
 
   const formProps: UseFormProps<BoardFormType> = {
     defaultValues: {
@@ -30,14 +28,12 @@ export const useCreateBoardForm = () => {
         name: name,
       },
       {
-        onSuccess: (data) => {
+        onSuccess: () => {
           form.reset({
             name: "",
             list: [],
           });
           setIsOpenDialog(false);
-          setActiveBoard(data);
-          queryClient.invalidateQueries({ queryKey: [GET_BOARDS_CACHE_KEY] });
         },
         onError: (error) => {
           const errorData = error.response?.data;
