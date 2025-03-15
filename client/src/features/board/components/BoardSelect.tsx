@@ -15,7 +15,6 @@ type SelectBoardProps = {
 
 export const BoardSelect: FC<SelectBoardProps> = ({ boards }) => {
   const [activeBoard, setActiveBoard] = useAtom(activeBoardAtom);
-
   const triggerCreateFormDialog = useSetAtom(triggerCreateFormDialogAtom);
   const [isOpenBoardSelect, setIsOpenBoardSelect] = useAtom(
     isOpenBoardSelectAtom

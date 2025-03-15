@@ -9,9 +9,9 @@ export async function get<T>(
   return response.data;
 }
 
-export async function post<T, K>(
+export async function post<T, D>(
   url: string,
-  data?: K,
+  data?: D,
   config?: AxiosRequestConfig
 ): Promise<T> {
   const response = await client.post<T>(url, data, config);
@@ -27,9 +27,9 @@ export async function put<T>(
   return response.data;
 }
 
-export async function patch<T>(
+export async function patch<T, D>(
   url: string,
-  data?: Partial<T>,
+  data?: D,
   config?: AxiosRequestConfig
 ): Promise<T> {
   const response = await client.patch<T>(url, data, config);
