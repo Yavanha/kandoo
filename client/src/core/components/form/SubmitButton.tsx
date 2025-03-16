@@ -21,7 +21,6 @@ export const SubmitButton: FC<SubmitButtonProps> = ({
   }
 
   const disabled = !isValid || !isDirty;
-  console.log({ disabled, isDirty, isValid });
   return (
     <>
       <Button

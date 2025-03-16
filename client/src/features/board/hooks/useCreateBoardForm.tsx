@@ -1,49 +1,35 @@
 import { SubmitHandler, useForm, UseFormProps } from "react-hook-form";
-import { BoardFormType } from "../types";
+import { BoardFormType, CreateBoardType } from "../types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BoardSchema } from "../schema";
 import { useCreateBoard } from "./useCreateBoard";
-import { useSetAtom } from "jotai";
-import { isOpenBoardDialogAtom } from "../store/atoms";
-// import { useQueryClient } from "@tanstack/react-query";
-// import { GET_BOARDS_CACHE_KEY } from "../constants/constants";
+import { useMutationOptions } from "./useMutateOptions";
 
 export const useCreateBoardForm = () => {
   const { createBoardMutation } = useCreateBoard();
-  const setIsOpenDialog = useSetAtom(isOpenBoardDialogAtom);
-
+  const defaultValues = {
+    name: "",
+    list: [],
+  };
   const formProps: UseFormProps<BoardFormType> = {
-    defaultValues: {
-      name: "",
-      list: [],
-    },
+    ...defaultValues,
     resolver: zodResolver(BoardSchema),
     shouldFocusError: true,
   };
   const form = useForm<BoardFormType>(formProps);
+  const { reset, setError } = form;
+  const options = useMutationOptions<CreateBoardType>(
+    reset,
+    setError,
+    defaultValues
+  );
   const onSubmit: SubmitHandler<BoardFormType> = ({ name, list }) => {
     createBoardMutation.mutate(
       {
         columns: list,
         name: name,
       },
-      {
-        onSuccess: () => {
-          form.reset({
-            name: "",
-            list: [],
-          });
-          setIsOpenDialog(false);
-        },
-        onError: (error) => {
-          const errorData = error.response?.data;
-          if (errorData) {
-            form.setError("root", {
-              message: error.response?.data.message,
-            });
-          }
-        },
-      }
+      options
     );
   };
 

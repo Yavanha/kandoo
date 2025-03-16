@@ -28,7 +28,16 @@ export const RemovableFieldList = <T extends GenericFormType>({
   const { fields, append, remove } = useFieldArray({
     control,
     name: "list",
+    keyName: "id",
   });
+
+  const handleAppend = () => {
+    append({ title: "" });
+  };
+  const handleRemove = (index: number) => {
+    remove(index);
+  };
+
   return (
     <div className="mb-6">
       <Label label={label} hasError={!!errors.list} />
@@ -36,9 +45,9 @@ export const RemovableFieldList = <T extends GenericFormType>({
         {fields.map((field, index) => {
           return (
             <RemovableField
-              key={field.id}
+              key={index}
               title={field.title}
-              remove={remove}
+              remove={() => handleRemove(index)}
               error={errors.list?.[index]?.title}
               {...register(`list.${index}.title`, {
                 onChange: () => trigger(`list.${index}.title`),
@@ -47,11 +56,7 @@ export const RemovableFieldList = <T extends GenericFormType>({
           );
         })}
       </div>
-      <Button
-        type="button"
-        severity="secondary"
-        onClick={() => append({ title: "" })}
-      >
+      <Button type="button" severity="secondary" onClick={() => handleAppend()}>
         {buttonLabel}
       </Button>
     </div>

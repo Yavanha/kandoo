@@ -1,15 +1,15 @@
 import { SubmitHandler, useForm, UseFormProps } from "react-hook-form";
-import { BoardFormType } from "../types";
+import { Board, BoardFormType, UpdateBoardType } from "../types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BoardSchema } from "../schema";
-import { useAtomValue, useSetAtom } from "jotai";
-import { activeBoardAtom, isOpenBoardDialogAtom } from "../store/atoms";
+import { useAtomValue } from "jotai";
+import { activeBoardAtom } from "../store/atoms";
 import { useEditBoard } from "./useEditBoard";
+import { useMutationOptions } from "./useMutateOptions";
 
 export const useEditBoardForm = () => {
   const { updateBoardMutation } = useEditBoard();
-  const activeBoard = useAtomValue(activeBoardAtom);
-  const setIsOpenDialog = useSetAtom(isOpenBoardDialogAtom);
+  const activeBoard = useAtomValue(activeBoardAtom) as Board;
 
   const formProps: UseFormProps<BoardFormType> = {
     defaultValues: {
@@ -20,6 +20,14 @@ export const useEditBoardForm = () => {
     shouldFocusError: true,
   };
   const form = useForm<BoardFormType>(formProps);
+  const { reset, setError } = form;
+  const options = useMutationOptions<UpdateBoardType>(reset, setError, {
+    name: activeBoard.name,
+    list: activeBoard.columns.map((item) => ({
+      colid: item.id,
+      title: item.title,
+    })),
+  });
   const onSubmit: SubmitHandler<BoardFormType> = ({ name, list }) => {
     updateBoardMutation.mutate(
       {
@@ -27,23 +35,7 @@ export const useEditBoardForm = () => {
         columns: list,
         name: name,
       },
-      {
-        onSuccess: () => {
-          form.reset({
-            name: activeBoard?.name,
-            list: activeBoard?.columns,
-          });
-          setIsOpenDialog(false);
-        },
-        onError: (error) => {
-          const errorData = error.response?.data;
-          if (errorData) {
-            form.setError("root", {
-              message: error.response?.data.message,
-            });
-          }
-        },
-      }
+      options
     );
   };
 

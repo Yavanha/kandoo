@@ -1,7 +1,7 @@
 import { z } from "@kandoo/shared";
 
 export const ItemSchema = z.object({
-  id: z.string().uuid().optional(),
+  colid: z.string().uuid().optional(),
   title: z
     .string()
     .nonempty("the column title is require")
@@ -9,5 +9,5 @@ export const ItemSchema = z.object({
 });
 
 export const FormSchema = z.object({
-  list: ItemSchema.array(),
+  list: z.array(ItemSchema),
 });

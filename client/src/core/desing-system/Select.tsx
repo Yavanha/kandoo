@@ -21,10 +21,6 @@ export const Select: FC<SelectProps> = ({
   onValueChange,
 }) => {
   const selecteIcon = isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />;
-  console.log({
-    selectedValue,
-    inTheArray: values.find((s) => selectedValue === s),
-  });
 
   return (
     <RadixSelect.Root
