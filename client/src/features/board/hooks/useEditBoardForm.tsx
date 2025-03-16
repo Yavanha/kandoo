@@ -14,26 +14,35 @@ export const useEditBoardForm = () => {
   const formProps: UseFormProps<BoardFormType> = {
     defaultValues: {
       name: activeBoard?.name,
-      list: activeBoard?.columns,
+      list: activeBoard?.columns.map(({ id: colId, title }) => ({
+        colId,
+        title,
+      })),
     },
     resolver: zodResolver(BoardSchema),
     shouldFocusError: true,
   };
   const form = useForm<BoardFormType>(formProps);
-  const { reset, setError } = form;
+  const {
+    reset,
+    setError,
+    formState: { dirtyFields },
+  } = form;
   const options = useMutationOptions<UpdateBoardType>(reset, setError, {
     name: activeBoard.name,
     list: activeBoard.columns.map((item) => ({
-      colid: item.id,
+      colId: item.id,
       title: item.title,
     })),
   });
   const onSubmit: SubmitHandler<BoardFormType> = ({ name, list }) => {
     updateBoardMutation.mutate(
       {
-        id: activeBoard?.id,
-        columns: list,
-        name: name,
+        id: activeBoard.id,
+        ...(dirtyFields.list && dirtyFields.list
+          ? { columns: list.map(({ colId: id, title }) => ({ id, title })) }
+          : {}),
+        ...(dirtyFields.name ? { name } : {}),
       },
       options
     );

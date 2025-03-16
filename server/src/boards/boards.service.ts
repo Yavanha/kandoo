@@ -7,6 +7,7 @@ import { CreateBoardDto } from './create-board.dto';
 import { UpdateBoardDto } from './update-board.dto';
 import { BoardColumn } from 'src/board-columns/board-column.entity';
 import { UpdateBoardColumnDto } from 'src/board-columns/update-board-column.dto';
+import { CreateBoardColumnDto } from 'src/board-columns/create-board-column.dto';
 
 @Injectable()
 export class BoardsService {
@@ -18,7 +19,7 @@ export class BoardsService {
   ) {}
 
   async create(createBoardDto: CreateBoardDto) {
-    await this.checkIfBoardExists(createBoardDto.name);
+    await this.checkIfBoardIsValid(createBoardDto);
     return await this.boardsRepository.save(createBoardDto);
   }
 
@@ -40,22 +41,27 @@ export class BoardsService {
   }
   async update(board: Board, updateBoardDto: UpdateBoardDto) {
     const { name: boardName, columns: updateBoardColumns } = updateBoardDto;
+    const newBoardAttributes: UpdateBoardDto = {};
     if (!boardName && !updateBoardColumns) return board;
     if (boardName) {
       await this.checkIfBoardExists(boardName);
-      board.name = boardName;
+      newBoardAttributes.name = boardName;
     }
     if (updateBoardColumns) {
-      board.columns = this.updateBoardColumns(
-        board.columns,
-        updateBoardColumns,
-      );
+      this.checkIfBoardColumnsUnique(updateBoardColumns);
+      newBoardAttributes.columns = updateBoardColumns;
     }
+    Object.assign(board, newBoardAttributes);
     return await this.boardsRepository.save(board);
   }
 
   async remove(id: string) {
     await this.boardsRepository.delete(id);
+  }
+
+  private async checkIfBoardIsValid(board: CreateBoardDto) {
+    await this.checkIfBoardExists(board.name);
+    if (board.columns) this.checkIfBoardColumnsUnique(board.columns);
   }
 
   private async checkIfBoardExists(name: string) {
@@ -65,27 +71,14 @@ export class BoardsService {
     }
   }
 
-  updateBoardColumns(
-    existingBoardColumns: BoardColumn[],
-    updatedBoardColumns: UpdateBoardColumnDto[],
+  private checkIfBoardColumnsUnique(
+    columns: (UpdateBoardColumnDto | CreateBoardColumnDto)[],
   ) {
-    const updatedColumns: BoardColumn[] = [];
-    updatedBoardColumns.forEach(({ id, title }) => {
-      if (!id && title) {
-        const newBoardColumn = this.boardColumnsRepository.create({ title });
-        updatedColumns.push(newBoardColumn);
-        return;
-      }
-      const existingBoardColumn = existingBoardColumns.find(
-        (column) => column.id === id,
+    const uniqueColumnTitle = new Set(columns.map(({ title }) => title));
+    if (uniqueColumnTitle.size < columns.length) {
+      throw new ConflictException(
+        'All Column Names must be unique, please provide unique names',
       );
-      if (existingBoardColumn && title) {
-        existingBoardColumn.title = title;
-        updatedColumns.push(
-          this.boardColumnsRepository.create(existingBoardColumn),
-        );
-      }
-    });
-    return updatedColumns;
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { BoardColumn } from "@/features/board-column";
+import { BoardColumn, UpdateBoardColumn } from "@/features/board-column";
 import { z } from "@kandoo/shared";
 import { BoardSchema } from "../schema";
 
@@ -10,11 +10,13 @@ export interface Board {
 
 export type CreateBoardType = {
   name: string;
-  columns: Pick<BoardColumn, "title">[];
+  columns: BoardColumn[];
 };
 
-export type UpdateBoardType = CreateBoardType & {
+export type UpdateBoardType = {
   id?: string;
+  name?: string;
+  columns?: UpdateBoardColumn[];
 };
 
 export type BoardFormType = z.infer<typeof BoardSchema>;

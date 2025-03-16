@@ -1,7 +1,7 @@
 import { z } from "@kandoo/shared";
 
 export const ItemSchema = z.object({
-  colid: z.string().uuid().optional(),
+  colId: z.string().uuid().optional(),
   title: z
     .string()
     .nonempty("the column title is require")

@@ -17,7 +17,10 @@ export const useEditBoard = () => {
     unknown
   >({
     mutationFn: async (data: UpdateBoardType) => {
-      return await patch<Board, UpdateBoardType>(`/boards/${data.id}`, data);
+      return await patch<Board, UpdateBoardType>(`/boards/${data.id}`, {
+        name: data.name,
+        columns: data.columns,
+      });
     },
     onSuccess: (data) => {
       setActiveBoard(data);
