@@ -1,23 +1,26 @@
 import { Input } from "@/core/desing-system";
 import { Form } from "radix-ui";
 import {
-  FieldValues,
-  useController,
-  UseControllerProps,
+  FieldError,
+  InternalFieldName,
+  UseFormRegisterReturn,
 } from "react-hook-form";
 
-export const TextField = <T extends FieldValues>(
-  props: UseControllerProps<T>
-) => {
-  const {
-    field,
-    fieldState: { error },
-  } = useController(props);
+type TextFieldProps<T extends InternalFieldName> = {
+  placeholder: string;
+  field: T extends InternalFieldName ? UseFormRegisterReturn<T> : never;
+  error?: FieldError;
+};
 
+export const TextField = <T extends InternalFieldName>({
+  placeholder,
+  field,
+  error,
+}: TextFieldProps<T>) => {
   return (
-    <Form.Field name={field.name} className="mb-6">
+    <Form.Field name="" className="mb-6">
       <Form.Control asChild>
-        <Input placeholder="e.g. Web Design" {...field} hasError={!!error} />
+        <Input placeholder={placeholder} {...field} hasError={!!error} />
       </Form.Control>
       {error && (
         <Form.Message className="text-destructive body-m">

@@ -1,7 +1,7 @@
 import classNames from "classnames";
-import { FC, forwardRef } from "react";
+import { DetailedHTMLProps, FC, forwardRef } from "react";
 
-type InputProps = React.DetailedHTMLProps<
+type InputProps = DetailedHTMLProps<
   React.InputHTMLAttributes<HTMLInputElement>,
   HTMLInputElement
 > & {

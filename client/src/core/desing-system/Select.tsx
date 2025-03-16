@@ -38,33 +38,35 @@ export const Select: FC<SelectProps> = ({
       </RadixSelect.Trigger>
       <RadixSelect.Content
         position="popper"
-        sideOffset={20}
-        className="overflow-hidden rounded-md bg-white shadow-md border-lines-light border-solid border py-4 pr-6 min-w-[16.5rem]"
+        sideOffset={10}
+        className=" rounded-md bg-white shadow-md border-lines-light border-solid border py-4 pr-6 min-w-[16.5rem]"
       >
         <p className="body-m uppercase text-medium-grey  ps-6 tracking-widest  pb-5">
           ALL values ( {values.length} )
         </p>
-        {values.map((value, index) => (
-          <RadixSelect.Item
-            key={`value-${index}`}
-            value={value}
-            className={classNames("  text-medium-grey", {
-              "bg-primary text-white rounded-br-full rounded-tr-full ":
-                value === selectedValue,
-            })}
-          >
-            <div className="flex items-center gap-x-2 px-6 py-3">
-              <img
-                src="/icons/icon-board.svg"
-                alt="board icon"
-                className="block fill-white "
-              />
-              <RadixSelect.ItemText className="heading-m">
-                {value}
-              </RadixSelect.ItemText>
-            </div>
-          </RadixSelect.Item>
-        ))}
+        <div className="overflow-y-auto max-h-[15rem]">
+          {values.map((value, index) => (
+            <RadixSelect.Item
+              key={`value-${index}`}
+              value={value}
+              className={classNames("  text-medium-grey  cursor-pointer", {
+                "bg-primary text-white rounded-br-full rounded-tr-full ":
+                  value === selectedValue,
+              })}
+            >
+              <div className="flex items-center gap-x-2 px-6 py-3">
+                <img
+                  src="/icons/icon-board.svg"
+                  alt="board icon"
+                  className="block fill-white "
+                />
+                <RadixSelect.ItemText className="heading-m">
+                  {value}
+                </RadixSelect.ItemText>
+              </div>
+            </RadixSelect.Item>
+          ))}
+        </div>
 
         {children}
       </RadixSelect.Content>

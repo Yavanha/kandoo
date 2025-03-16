@@ -1,9 +1,16 @@
+import { DialogTrigger } from "@/core/components/dialog/DialogTrigger";
 import { BoardSelect } from "@/features/board/components";
+import { BoardDialog } from "@/features/board/components/BoardDialog";
+import { BoardDropdownMenu } from "@/features/board/components/BoardDropdownMenu";
 import { useBoards } from "@/features/board/hooks/useBoards";
-import { useBoardStore } from "@/features/board/store/board.store";
+import {
+  activeBoardAtom,
+  triggerCreateFormDialogAtom,
+} from "@/features/board/store/atoms";
 import { createLazyFileRoute } from "@tanstack/react-router";
+import { useAtomValue, useSetAtom } from "jotai";
 import { Toolbar } from "radix-ui";
-import { useEffect, Suspense } from "react";
+import { Suspense } from "react";
 
 export const Route = createLazyFileRoute("/boards/")({
   component: Index,
@@ -11,14 +18,20 @@ export const Route = createLazyFileRoute("/boards/")({
 
 export function Index() {
   const boards = useBoards();
-  const activeBoard = useBoardStore((state) => state.activeBoard);
-  const setActiveBoard = useBoardStore((state) => state.setActiveBoard);
+  const activeBoard = useAtomValue(activeBoardAtom);
+  const triggerCreateFormDialog = useSetAtom(triggerCreateFormDialogAtom);
 
-  useEffect(() => {
-    if (boards.length > 0) {
-      setActiveBoard(boards[0]);
-    }
-  }, [boards, setActiveBoard]);
+  let selectOrDialogTrigger = (
+    <DialogTrigger openBoardDialog={triggerCreateFormDialog}>
+      <p className="capitalize heading-m flex items-center gap-x-0.5 text-primary">
+        <span className="inline-block align-middle">+</span> Create New Board
+      </p>
+    </DialogTrigger>
+  );
+
+  if (boards.length > 0) {
+    selectOrDialogTrigger = <BoardSelect boards={boards} />;
+  }
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -27,7 +40,7 @@ export function Index() {
           <Toolbar.Button role="menu">
             <img src="/icons/logo-mobile.svg" alt="menu" />
           </Toolbar.Button>
-          <BoardSelect boards={boards} />
+          {selectOrDialogTrigger}
         </div>
         <div className="flex items-center gap-x-4">
           <Toolbar.Button
@@ -37,11 +50,10 @@ export function Index() {
           >
             <img src="/icons/icon-add-task-mobile.svg" alt="add task" />
           </Toolbar.Button>
-          <Toolbar.Button role="more options">
-            <img src="/icons/icon-vertical-ellipsis.svg" alt="more options" />
-          </Toolbar.Button>
+          <BoardDropdownMenu />
         </div>
       </Toolbar.Root>
+      <BoardDialog />
     </Suspense>
   );
 }
