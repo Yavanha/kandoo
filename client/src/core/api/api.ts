@@ -36,7 +36,7 @@ export async function patch<T, D>(
   return response.data;
 }
 
-export async function deleteRdequest<T>(
+export async function remove<T>(
   url: string,
   config?: AxiosRequestConfig
 ): Promise<T> {

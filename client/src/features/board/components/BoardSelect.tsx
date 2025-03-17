@@ -33,7 +33,7 @@ export const BoardSelect: FC<SelectBoardProps> = ({ boards }) => {
 
   return (
     <Select
-      value={activeBoard ? activeBoard.name : boardNames[0]}
+      value={activeBoard ? activeBoard.name : undefined}
       values={boardNames}
       placeholder="Select a board"
       onValueChange={selecteValudChangeHandler}

@@ -50,7 +50,7 @@ export function Index() {
           >
             <img src="/icons/icon-add-task-mobile.svg" alt="add task" />
           </Toolbar.Button>
-          <BoardDropdownMenu />
+          {activeBoard != null && <BoardDropdownMenu />}
         </div>
       </Toolbar.Root>
       <BoardDialog />

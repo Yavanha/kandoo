@@ -1,6 +1,6 @@
 import { BoardColumn, UpdateBoardColumn } from "@/features/board-column";
 import { z } from "@kandoo/shared";
-import { BoardSchema } from "../schema";
+import { BoardSchema, DeleteBoardShema } from "../schema";
 
 export interface Board {
   id: string;
@@ -18,6 +18,8 @@ export type UpdateBoardType = {
   name?: string;
   columns?: UpdateBoardColumn[];
 };
+
+export type DeleteBoardType = z.infer<typeof DeleteBoardShema>;
 
 export type BoardFormType = z.infer<typeof BoardSchema>;
 

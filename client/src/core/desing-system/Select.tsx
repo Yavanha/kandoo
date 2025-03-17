@@ -3,7 +3,7 @@ import { Select as RadixSelect } from "radix-ui";
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import classNames from "classnames";
 type SelectProps = {
-  value: string;
+  value: string | undefined;
   values: string[];
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
