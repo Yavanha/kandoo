@@ -13,6 +13,7 @@ import {
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './create-board.dto';
 import { UpdateBoardDto } from './update-board.dto';
+import { FindOneParam } from 'src/common/params/find-one.param';
 
 @Controller('api/boards')
 export class BoardsController {
@@ -29,13 +30,13 @@ export class BoardsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param() { id }: FindOneParam) {
     return await this.tryToRetrieveBoard(id);
   }
 
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param() { id }: FindOneParam,
     @Body() updateBoardDto: UpdateBoardDto,
   ) {
     const board = await this.tryToRetrieveBoard(id);
@@ -44,7 +45,8 @@ export class BoardsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string) {
+  async remove(@Param() { id }: FindOneParam) {
+    await this.tryToRetrieveBoard(id);
     await this.boardsService.remove(id);
   }
 

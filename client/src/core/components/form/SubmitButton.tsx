@@ -2,6 +2,7 @@ import { Button } from "@/core/desing-system";
 import { CircleIcon } from "@radix-ui/react-icons";
 import { FC } from "react";
 import { FieldValues, FormState } from "react-hook-form";
+import { Paragraph } from "../Typography/Paragraph";
 
 type SubmitButtonProps = Pick<
   FormState<FieldValues>,
@@ -31,8 +32,8 @@ export const SubmitButton: FC<SubmitButtonProps> = ({
       >
         {submitContentElt}
       </Button>
-      {errors.root && (
-        <p className="text-destructive body-m ">{errors.root.message}</p>
+      {errors.root && errors.root.message && (
+        <Paragraph severity="danger" text={errors.root.message} />
       )}
     </>
   );

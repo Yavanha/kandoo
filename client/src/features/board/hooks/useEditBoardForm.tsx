@@ -28,13 +28,17 @@ export const useEditBoardForm = () => {
     setError,
     formState: { dirtyFields },
   } = form;
-  const options = useMutationOptions<UpdateBoardType>(reset, setError, {
-    name: activeBoard.name,
-    list: activeBoard.columns.map((item) => ({
-      colId: item.id,
-      title: item.title,
-    })),
-  });
+  const options = useMutationOptions<UpdateBoardType, BoardFormType>(
+    reset,
+    setError,
+    {
+      name: activeBoard.name,
+      list: activeBoard.columns.map((item) => ({
+        colId: item.id,
+        title: item.title,
+      })),
+    }
+  );
   const onSubmit: SubmitHandler<BoardFormType> = ({ name, list }) => {
     updateBoardMutation.mutate(
       {
