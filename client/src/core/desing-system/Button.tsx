@@ -6,10 +6,11 @@ type ButtonProps = React.DetailedHTMLProps<
   HTMLButtonElement
 > & {
   severity?: "primary" | "secondary" | "danger";
+  fit?: boolean;
 };
 
 export const Button: FC<ButtonProps> = (props) => {
-  const { severity } = props;
+  const { severity, fit } = props;
   return (
     <button
       {...props}
@@ -26,6 +27,9 @@ export const Button: FC<ButtonProps> = (props) => {
         {
           "bg-secondary hover:bg-secondary-hover text-primary":
             severity === "secondary",
+        },
+        {
+          "max-w-fit": fit,
         }
       )}
     ></button>

@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { FC } from "react";
 import { Board } from "../types";
 import { Select } from "@/core/desing-system";
 import { useAtom, useSetAtom } from "jotai";
@@ -21,7 +21,7 @@ export const BoardSelect: FC<SelectBoardProps> = ({ boards }) => {
   );
   useHydrateAtoms([[activeBoardAtom, boards[0]]]);
 
-  const boardNames = useMemo(() => boards.map(({ name }) => name), [boards]);
+  const boardNames = boards.map(({ name }) => name);
 
   const selecteValudChangeHandler = (value: string) => {
     const selectedBoard = boards.find((board) => board.name === value);

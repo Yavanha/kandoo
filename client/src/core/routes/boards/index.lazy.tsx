@@ -1,4 +1,5 @@
 import { DialogTrigger } from "@/core/components/dialog/DialogTrigger";
+import { BoardColumns } from "@/features/board-column/components";
 import { BoardSelect } from "@/features/board/components";
 import { BoardDialog } from "@/features/board/components/BoardDialog";
 import { BoardDropdownMenu } from "@/features/board/components/BoardDropdownMenu";
@@ -53,6 +54,7 @@ export function Index() {
           {activeBoard != null && <BoardDropdownMenu />}
         </div>
       </Toolbar.Root>
+      <BoardColumns />
       <BoardDialog />
     </Suspense>
   );
