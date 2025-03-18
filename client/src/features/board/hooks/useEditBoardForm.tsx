@@ -2,20 +2,19 @@ import { SubmitHandler, useForm, UseFormProps } from "react-hook-form";
 import { Board, BoardFormType, UpdateBoardType } from "../types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BoardSchema } from "../schema";
-import { useAtomValue } from "jotai";
-import { activeBoardAtom } from "../store/atoms";
 import { useEditBoard } from "./useEditBoard";
 import { useMutationOptions } from "./useMutateOptions";
+import { useBoard } from "./useBoard";
 
 export const useEditBoardForm = () => {
   const { updateBoardMutation } = useEditBoard();
-  const activeBoard = useAtomValue(activeBoardAtom) as Board;
+  const activeBoard = useBoard() as Board;
 
   const formProps: UseFormProps<BoardFormType> = {
     defaultValues: {
       name: activeBoard?.name,
-      list: activeBoard?.columns.map(({ id: colId, title }) => ({
-        colId,
+      list: activeBoard?.columns.map(({ id: itemId, title }) => ({
+        itemId,
         title,
       })),
     },
@@ -34,7 +33,7 @@ export const useEditBoardForm = () => {
     {
       name: activeBoard.name,
       list: activeBoard.columns.map((item) => ({
-        colId: item.id,
+        itemId: item.id,
         title: item.title,
       })),
     }
@@ -44,7 +43,7 @@ export const useEditBoardForm = () => {
       {
         id: activeBoard.id,
         ...(dirtyFields.list && dirtyFields.list
-          ? { columns: list.map(({ colId: id, title }) => ({ id, title })) }
+          ? { columns: list.map(({ itemId: id, title }) => ({ id, title })) }
           : {}),
         ...(dirtyFields.name ? { name } : {}),
       },

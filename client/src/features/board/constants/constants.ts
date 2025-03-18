@@ -1,4 +1,5 @@
-export const GET_BOARDS_CACHE_KEY = "GET_BOARD";
+export const GET_BOARDS_CACHE_KEY = "GET_BOARDS";
+export const GET_BOARD_CACHE_KEY = "GET_BOARD";
 
 //
 export const DELETE_BOARD_DIALOG = "Delete this board?";

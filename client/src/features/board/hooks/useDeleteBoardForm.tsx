@@ -2,14 +2,14 @@ import { SubmitHandler, useForm, UseFormProps } from "react-hook-form";
 import { Board, DeleteBoardType } from "../types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DeleteBoardShema } from "../schema";
-import { useAtomValue } from "jotai";
-import { activeBoardAtom } from "../store/atoms";
+
 import { useMutationOptions } from "./useMutateOptions";
 import { useDeleteBoard } from "./useDeleteBoard";
+import { useBoard } from "./useBoard";
 
 export const useDeleteBoardForm = () => {
   const { deleteBoardMutation } = useDeleteBoard();
-  const activeBoard = useAtomValue(activeBoardAtom) as Board;
+  const activeBoard = useBoard() as Board;
 
   const formProps: UseFormProps<DeleteBoardType> = {
     defaultValues: {

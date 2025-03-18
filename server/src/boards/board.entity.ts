@@ -14,7 +14,6 @@ export class Board extends BaseEntity {
 
   @OneToMany(() => BoardColumn, (boardColumn) => boardColumn.board, {
     cascade: true,
-    eager: true,
   })
   columns: BoardColumn[];
 }

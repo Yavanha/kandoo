@@ -3,11 +3,10 @@ import { CreateBoardForm, EditBoardForm } from "../components";
 import { DeleteBoardForm } from "../components/DeleteBoardForm";
 import { DELETE_BOARD_DIALOG } from "../constants/constants";
 import { BoardActionMode } from "../types";
-import { useAtomValue } from "jotai";
-import { activeBoardAtom } from "../store/atoms";
+import { useBoard } from "./useBoard";
 
 export const useBoardFormMap = () => {
-  const activeBoard = useAtomValue(activeBoardAtom);
+  const activeBoard = useBoard();
   const boardFormMap = useMemo(
     () =>
       new Map<BoardActionMode, { element: ReactElement; dialogTitle: string }>([

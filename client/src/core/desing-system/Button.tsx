@@ -10,10 +10,10 @@ type ButtonProps = React.DetailedHTMLProps<
 };
 
 export const Button: FC<ButtonProps> = (props) => {
-  const { severity, fit } = props;
+  const { severity, fit, ...propsButton } = props;
   return (
     <button
-      {...props}
+      {...propsButton}
       className={classNames(
         `body-l  bg w-full p-2 rounded-full disabled:pointer-events-none select-none disabled:bg-medium-grey-25 cursor-pointer`,
         {

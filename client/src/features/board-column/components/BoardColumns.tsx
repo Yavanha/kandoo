@@ -1,15 +1,15 @@
 import { Paragraph } from "@/core/components";
-import { activeBoardAtom } from "@/features/board/store/atoms";
-import { useAtomValue } from "jotai";
+
 import {
   NEW_COLUMNS,
   NO_BOARD_COLUMNS_MESSAGE,
   NO_BOARD_SELECTED,
 } from "../constants";
 import { Button } from "@/core/desing-system";
+import { useBoard } from "@/features/board/hooks";
 
 export const BoardColumns = () => {
-  const activeBoard = useAtomValue(activeBoardAtom);
+  const activeBoard = useBoard();
 
   if (!activeBoard) {
     return (
@@ -46,8 +46,8 @@ export const BoardColumns = () => {
           </li>
         );
       })}
-      <li className=" shrink-0 grow-0 basis-[17.5rem]  bg-lines-light cursor-pointer mt-10 flex items-center justify-center">
-        <button className=" hover:text-primary text-medium-grey capitalize heading-xl">
+      <li className=" shrink-0 grow-0 basis-[17.5rem]  bg-lines-light  mt-10 flex items-center justify-center">
+        <button className=" hover:text-primary text-medium-grey capitalize heading-xl cursor-pointer">
           {NEW_COLUMNS}
         </button>
       </li>

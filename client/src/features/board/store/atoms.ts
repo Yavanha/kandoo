@@ -1,7 +1,6 @@
 import { atom } from "jotai";
-import { Board, BoardActionMode } from "../types";
+import { BoardActionMode } from "../types";
 
-export const activeBoardAtom = atom<Board | null>(null);
 export const isOpenBoardDialogAtom = atom<boolean>(false);
 export const isOpenBoardSelectAtom = atom<boolean>(false);
 export const isOpenBoardDropdownMenuAtom = atom<boolean>(false);
@@ -24,3 +23,5 @@ export const triggerDeleteFormDialogAtom = atom(null, (_, set) => {
   set(boardFormModeAtom, "DELETE");
   set(isOpenBoardDialogAtom, true);
 });
+
+export const boardIdAtom = atom<string | null>(null);

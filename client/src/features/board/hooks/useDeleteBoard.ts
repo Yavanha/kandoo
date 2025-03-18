@@ -4,13 +4,11 @@ import { remove } from "@/core/api";
 import { GET_BOARDS_CACHE_KEY } from "../constants/constants";
 import { AxioResponsError } from "@/core/types";
 import { AxiosError } from "axios";
-import { useSetAtom } from "jotai";
-import { activeBoardAtom } from "../store/atoms";
+import { useNavigate } from "@tanstack/react-router";
 
 export const useDeleteBoard = () => {
   const queryClient = useQueryClient();
-  const setActiveBoard = useSetAtom(activeBoardAtom);
-
+  const navigate = useNavigate();
   const mutation = useMutation<
     Board,
     AxiosError<AxioResponsError>,
@@ -22,14 +20,23 @@ export const useDeleteBoard = () => {
       return await remove<Board>(`/boards/${data.id}`);
     },
     onSuccess: (_, { id: deletedId }) => {
-      queryClient.invalidateQueries({ queryKey: [GET_BOARDS_CACHE_KEY] });
+      queryClient.invalidateQueries({
+        queryKey: [GET_BOARDS_CACHE_KEY],
+      });
       const boards = queryClient
         .getQueryData<Board[]>([GET_BOARDS_CACHE_KEY])
         ?.filter((board) => board.id !== deletedId);
       if (boards && boards.length) {
-        setActiveBoard(boards[0]);
+        navigate({
+          to: "/boards/$id",
+          params: {
+            id: boards[0].id,
+          },
+        });
       } else {
-        setActiveBoard(null);
+        navigate({
+          from: "/boards",
+        });
       }
     },
   });

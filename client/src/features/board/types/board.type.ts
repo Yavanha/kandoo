@@ -10,7 +10,7 @@ export interface Board {
 
 export type CreateBoardType = {
   name: string;
-  columns: BoardColumn[];
+  columns?: Partial<BoardColumn>[];
 };
 
 export type UpdateBoardType = {

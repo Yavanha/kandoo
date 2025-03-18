@@ -1,25 +1,22 @@
 import { DialogTrigger } from "@/core/components/dialog/DialogTrigger";
-import { BoardColumns } from "@/features/board-column/components";
-import { BoardSelect } from "@/features/board/components";
-import { BoardDialog } from "@/features/board/components/BoardDialog";
+import { BoardDialog, BoardSelect } from "@/features/board/components";
 import { BoardDropdownMenu } from "@/features/board/components/BoardDropdownMenu";
+import { useBoard } from "@/features/board/hooks";
 import { useBoards } from "@/features/board/hooks/useBoards";
-import {
-  activeBoardAtom,
-  triggerCreateFormDialogAtom,
-} from "@/features/board/store/atoms";
-import { createLazyFileRoute } from "@tanstack/react-router";
-import { useAtomValue, useSetAtom } from "jotai";
+import { triggerCreateFormDialogAtom } from "@/features/board/store/atoms";
+import { Board } from "@/features/board/types";
+import { createLazyFileRoute, Outlet } from "@tanstack/react-router";
+import { useSetAtom } from "jotai";
 import { Toolbar } from "radix-ui";
 import { Suspense } from "react";
 
-export const Route = createLazyFileRoute("/boards/")({
+export const Route = createLazyFileRoute("/boards")({
   component: Index,
 });
 
 export function Index() {
-  const boards = useBoards();
-  const activeBoard = useAtomValue(activeBoardAtom);
+  const boards: Board[] = useBoards();
+  const activeBoard = useBoard();
   const triggerCreateFormDialog = useSetAtom(triggerCreateFormDialogAtom);
 
   let selectOrDialogTrigger = (
@@ -35,7 +32,7 @@ export function Index() {
   }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>Suspense</div>}>
       <Toolbar.Root className="sticky top-0 left-0 flex items-center bg-white px-4 py-5 justify-between">
         <div className="flex items-center gap-4">
           <Toolbar.Button role="menu">
@@ -54,7 +51,7 @@ export function Index() {
           {activeBoard != null && <BoardDropdownMenu />}
         </div>
       </Toolbar.Root>
-      <BoardColumns />
+      <Outlet />
       <BoardDialog />
     </Suspense>
   );

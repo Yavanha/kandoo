@@ -18,7 +18,7 @@ export const useCreateBoardForm = () => {
   };
   const form = useForm<BoardFormType>(formProps);
   const { reset, setError } = form;
-  const options = useMutationOptions<CreateBoardType>(
+  const options = useMutationOptions<CreateBoardType, BoardFormType>(
     reset,
     setError,
     defaultValues
@@ -26,7 +26,9 @@ export const useCreateBoardForm = () => {
   const onSubmit: SubmitHandler<BoardFormType> = ({ name, list }) => {
     createBoardMutation.mutate(
       {
-        columns: list,
+        columns: list.map(({ title }) => ({
+          title,
+        })),
         name: name,
       },
       options

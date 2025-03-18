@@ -26,8 +26,11 @@ importers:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.67.2
         version: 5.68.0(eslint@9.22.0(jiti@2.4.2))(typescript@5.7.3)
+      '@tanstack/query-core':
+        specifier: ^5.68.0
+        version: 5.68.0
       '@tanstack/react-query':
-        specifier: ^5.67.2
+        specifier: ^5.68.0
         version: 5.68.0(react@19.0.0)
       '@tanstack/react-router':
         specifier: ^1.112.18
@@ -41,6 +44,9 @@ importers:
       jotai:
         specifier: ^2.12.2
         version: 2.12.2(@types/react@19.0.10)(react@19.0.0)
+      jotai-tanstack-query:
+        specifier: ^0.9.0
+        version: 0.9.0(@tanstack/query-core@5.68.0)(jotai@2.12.2(@types/react@19.0.10)(react@19.0.0))
       radix-ui:
         specifier: ^1.1.3
         version: 1.1.3(@types/react-dom@19.0.4(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -3734,6 +3740,12 @@ packages:
 
   joi@17.13.3:
     resolution: {integrity: sha512-otDA4ldcIx+ZXsKHWmp0YizCweVRZG96J10b0FevjfuncLO1oX59THoAmHkNubYJ+9gWsYsp5k8v4ib6oDv1fA==}
+
+  jotai-tanstack-query@0.9.0:
+    resolution: {integrity: sha512-8n7/xV14+ZE63dyqngtmqs6aV1bNnQJF9bJN5Bj70USc2cMFRmsVhGGzL1cSvp5E/xXasU37czFFaZ0vavmyfA==}
+    peerDependencies:
+      '@tanstack/query-core': '*'
+      jotai: '>=2.0.0'
 
   jotai@2.12.2:
     resolution: {integrity: sha512-oN8715y7MkjXlSrpyjlR887TOuc/NLZMs9gvgtfWH/JP47ChwO0lR2ijSwBvPMYyXRAPT+liIAhuBavluKGgtA==}
@@ -9082,6 +9094,11 @@ snapshots:
       '@sideway/address': 4.1.5
       '@sideway/formula': 3.0.1
       '@sideway/pinpoint': 2.0.0
+
+  jotai-tanstack-query@0.9.0(@tanstack/query-core@5.68.0)(jotai@2.12.2(@types/react@19.0.10)(react@19.0.0)):
+    dependencies:
+      '@tanstack/query-core': 5.68.0
+      jotai: 2.12.2(@types/react@19.0.10)(react@19.0.0)
 
   jotai@2.12.2(@types/react@19.0.10)(react@19.0.0):
     optionalDependencies:

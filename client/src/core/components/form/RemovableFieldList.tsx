@@ -5,19 +5,19 @@ import {
   useFieldArray,
   UseFormTrigger,
 } from "react-hook-form";
-import { GenericFormType } from "@/core/types";
+import { GenericListFormType } from "@/core/types";
 import { RemovableField } from "./RemovableField";
 
-export type RemovableFieldListProps<T extends GenericFormType> = {
+export type RemovableFieldListProps<T extends GenericListFormType> = {
   label: string;
   buttonLabel: string;
   hasErrors?: boolean;
-  errors: T extends GenericFormType ? FieldErrors<T> : never;
-  control: T extends GenericFormType ? Control<T> : never;
-  trigger: T extends GenericFormType ? UseFormTrigger<T> : never;
+  errors: T extends GenericListFormType ? FieldErrors<T> : never;
+  control: T extends GenericListFormType ? Control<T> : never;
+  trigger: T extends GenericListFormType ? UseFormTrigger<T> : never;
 };
 
-export const RemovableFieldList = <T extends GenericFormType>({
+export const RemovableFieldList = <T extends GenericListFormType>({
   label,
   buttonLabel,
   control,
