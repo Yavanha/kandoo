@@ -11,7 +11,7 @@ import { HydrateAtoms } from "./core/components";
 import { queryClient } from "./core/config/query-client.config";
 import { store } from "./core/config/store.config";
 
-const router = createRouter({ routeTree, context: { queryClient } });
+const router = createRouter({ routeTree, context: { queryClient, store } });
 
 declare module "@tanstack/react-router" {
   interface Register {
