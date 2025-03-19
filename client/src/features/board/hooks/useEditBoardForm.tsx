@@ -5,6 +5,7 @@ import { BoardSchema } from "../schema";
 import { useEditBoard } from "./useEditBoard";
 import { useMutationOptions } from "./useMutateOptions";
 import { useBoard } from "./useBoard";
+import { buildPatchOperation } from "@/core/lib";
 
 export const useEditBoardForm = () => {
   const { updateBoardMutation } = useEditBoard();
@@ -22,11 +23,7 @@ export const useEditBoardForm = () => {
     shouldFocusError: true,
   };
   const form = useForm<BoardFormType>(formProps);
-  const {
-    reset,
-    setError,
-    formState: { dirtyFields },
-  } = form;
+  const { reset, setError } = form;
   const options = useMutationOptions<UpdateBoardType, BoardFormType>(
     reset,
     setError,
@@ -38,14 +35,27 @@ export const useEditBoardForm = () => {
       })),
     }
   );
-  const onSubmit: SubmitHandler<BoardFormType> = ({ name, list }) => {
+  const onSubmit: SubmitHandler<BoardFormType> = (data) => {
+    const { list, name } = data;
+
+    const operations = buildPatchOperation(
+      {
+        name: activeBoard.name,
+        columns: activeBoard.columns.map(({ title }) => ({
+          title,
+        })),
+      },
+      {
+        name,
+        columns: list.map(({ title }) => ({
+          title,
+        })),
+      }
+    );
     updateBoardMutation.mutate(
       {
         id: activeBoard.id,
-        ...(dirtyFields.list && dirtyFields.list
-          ? { columns: list.map(({ itemId: id, title }) => ({ id, title })) }
-          : {}),
-        ...(dirtyFields.name ? { name } : {}),
+        operations,
       },
       options
     );

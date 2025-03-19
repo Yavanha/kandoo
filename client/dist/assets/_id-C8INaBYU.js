@@ -1,0 +1,1 @@
+import{H as r,j as o}from"./index-5d3uBkcZ.js";const d=n=>{const{data:t}=n,{id:s}=r({from:t.routeId});return o.jsx(o.Fragment,{children:o.jsxs("div",{children:["not found ",s]})})};export{d as notFoundComponent};

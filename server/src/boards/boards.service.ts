@@ -4,18 +4,19 @@ import { Repository } from 'typeorm';
 import { Board } from './board.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBoardDto } from './create-board.dto';
-import { UpdateBoardDto } from './update-board.dto';
-import { BoardColumn } from 'src/board-columns/board-column.entity';
+// import { BoardColumn } from 'src/board-columns/board-column.entity';
 import { UpdateBoardColumnDto } from 'src/board-columns/update-board-column.dto';
 import { CreateBoardColumnDto } from 'src/board-columns/create-board-column.dto';
+import { PatchOperationDto } from './patch-operation.dto';
+// import { applyPatch } from '@kandoo/shared/dist';
 
 @Injectable()
 export class BoardsService {
   constructor(
     @InjectRepository(Board)
     private readonly boardsRepository: Repository<Board>,
-    @InjectRepository(BoardColumn)
-    private readonly boardColumnsRepository: Repository<BoardColumn>,
+    // @InjectRepository(BoardColumn)
+    // private readonly boardColumnsRepository: Repository<BoardColumn>,
   ) {}
 
   async create(createBoardDto: CreateBoardDto) {
@@ -39,20 +40,15 @@ export class BoardsService {
       where: { name },
     });
   }
-  async update(board: Board, updateBoardDto: UpdateBoardDto) {
-    const { name: boardName, columns: updateBoardColumns } = updateBoardDto;
-    const newBoardAttributes: UpdateBoardDto = {};
-    if (!boardName && !updateBoardColumns) return board;
-    if (boardName) {
-      await this.checkIfBoardExists(boardName);
-      newBoardAttributes.name = boardName;
-    }
-    if (updateBoardColumns) {
-      this.checkIfBoardColumnsUnique(updateBoardColumns);
-      newBoardAttributes.columns = updateBoardColumns;
-    }
-    Object.assign(board, newBoardAttributes);
-    return await this.boardsRepository.save(board);
+  async update(board: Board, patchOperationDto: PatchOperationDto) {
+    console.log(board, patchOperationDto);
+    return await new Promise((resolve) => resolve(board));
+    // const { operations } = patchOperationDto;
+    // const updatedBoard = applyPatch<Board>(board, operations).newDocument;
+    // console.log({ updatedBoard });
+    // return await new Promise((resolve) => {
+    //   resolve(board);
+    // });
   }
 
   async remove(id: string) {

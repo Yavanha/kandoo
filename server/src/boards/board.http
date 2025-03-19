@@ -13,7 +13,10 @@ POST {{ url }}
 Content-Type: {{contentType}}
 
 {
-  "name": "Platform Launch",
+  "name": "Platform Launch 5",
+  "columns" : [
+    {"title" : "test1"}
+  ]
 }
 
 ### Set Board as id
@@ -25,16 +28,14 @@ Content-Type: {{contentType}}
 
 ### Get Board by ID
 GET {{ url }}/{{ boardId }}
-
 ### Make a Board as completed
 PATCH {{ url }}/{{ boardId }}
 Content-Type: {{contentType}}
 
 {
-  "name": "Board 50",
-  "columns": [
-
-  ]
+ "operations" : [
+  { "op": "remove", "path": "/columns/1"}
+ ]
 }
 
 ### Delete Board

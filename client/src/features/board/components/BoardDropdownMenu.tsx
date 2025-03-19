@@ -9,7 +9,7 @@ import { DialogTrigger } from "@/core/components";
 
 export const BoardDropdownMenu = () => {
   const [isOpenBoardDropdownMenu, setIsOpenBoardDropdownMen] = useAtom(
-    isOpenBoardDropdownMenuAtom
+    isOpenBoardDropdownMenuAtom,
   );
   const triggerEditFormDialog = useSetAtom(triggerEditFormDialogAtom);
   const triggerDeleteFormDialog = useSetAtom(triggerDeleteFormDialogAtom);
@@ -19,7 +19,7 @@ export const BoardDropdownMenu = () => {
       open={isOpenBoardDropdownMenu}
       onOpenChange={setIsOpenBoardDropdownMen}
     >
-      <DropdownMenu.Trigger className="select-none cursor-pointer">
+      <DropdownMenu.Trigger className="select-none cursor-pointer ">
         <img src="/icons/icon-vertical-ellipsis.svg" alt="more options" />
       </DropdownMenu.Trigger>
 

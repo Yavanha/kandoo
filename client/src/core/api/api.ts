@@ -5,8 +5,13 @@ export async function get<T>(
   url: string,
   config?: AxiosRequestConfig
 ): Promise<T> {
-  const response = await client.get<T>(url, config);
-  return response.data;
+  try {
+    const response = await client.get<T>(url, config);
+    return response.data;
+  } catch (err) {
+    console.log(err);
+  }
+  return {} as T;
 }
 
 export async function post<T, D>(

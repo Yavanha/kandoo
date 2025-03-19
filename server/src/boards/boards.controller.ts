@@ -12,9 +12,8 @@ import {
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './create-board.dto';
-import { UpdateBoardDto } from './update-board.dto';
 import { FindOneParam } from 'src/common/params/find-one.param';
-
+import { PatchOperationDto } from './patch-operation.dto';
 @Controller('api/boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
@@ -37,10 +36,10 @@ export class BoardsController {
   @Patch(':id')
   async update(
     @Param() { id }: FindOneParam,
-    @Body() updateBoardDto: UpdateBoardDto,
+    @Body() patchOperationDto: PatchOperationDto,
   ) {
     const board = await this.tryToRetrieveBoard(id);
-    return this.boardsService.update(board, updateBoardDto);
+    return this.boardsService.update(board, patchOperationDto);
   }
 
   @Delete(':id')

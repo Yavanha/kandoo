@@ -1,20 +1,29 @@
 {
   "name": "kandoo",
-  "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "client",
-    "server",
-    "shared"
-  ],
-  "scripts": {
-    "build": "pnpm --filter client build && pnpm --filter server build && pnpm --filter shared build",
-    "build:shared": "pnpm --filter shared build",
-    "start:client": "pnpm --filter client dev",
-    "start:server": "pnpm --filter server run start:dev",
-    "start": "concurrently \"pnpm run build:shared\" \"pnpm run start:client\" \"pnpm run start:server\""
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "license": "UNLICENSED",
+  "author": "",
+  "engines": {
+    "node": "^20"
   },
+  "scripts": {
+    "build": "pnpm --filter '@kandoo/*' build",
+    "build:shared": "pnpm --filter '@kandoo/shared' build",
+    "build:clean": "pnpm clean && pnpm install && pnpm build",
+    "lint": "pnpm --filter '@kandoo/*' lint",
+    "test": "pnpm --filter '@kandoo/*' test",
+    "dev": "pnpm build:shared && concurrently -n server,client -c green,magenta \"pnpm dev:server\" \"pnpm dev:client\"",
+    "dev:server": "pnpm build:shared && pnpm --filter '@kandoo/server' start:dev",
+    "dev:client": "pnpm build:shared && pnpm --filter '@kandoo/client' dev",
+    "clean": "rm -rf node_modules && pnpm --filter '@kandoo/*' clean"
+  },
+  "packageManager": "pnpm@10.4.1",
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "@types/node": "^22.13.10",
+    "concurrently": "^9.1.2",
+    "typescript": "^5.8.2"
   }
 }

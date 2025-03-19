@@ -5,6 +5,7 @@ import { AxiosError } from "axios";
 import { Board, UpdateBoardType } from "../types";
 import { useNavigate } from "@tanstack/react-router";
 import { GET_BOARD_CACHE_KEY } from "../constants";
+import { Operation } from "@kandoo/shared";
 
 export const useEditBoard = () => {
   const queryClient = useQueryClient();
@@ -16,9 +17,9 @@ export const useEditBoard = () => {
     unknown
   >({
     mutationFn: async (data: UpdateBoardType) => {
-      return await patch<Board, UpdateBoardType>(`/boards/${data.id}`, {
-        name: data.name,
-        columns: data.columns,
+      const { id, operations } = data;
+      return await patch<Board, { operations: Operation[] }>(`/boards/${id}`, {
+        operations,
       });
     },
     onSuccess: (data) => {
