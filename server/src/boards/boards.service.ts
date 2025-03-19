@@ -8,7 +8,7 @@ import { CreateBoardDto } from './create-board.dto';
 import { UpdateBoardColumnDto } from 'src/board-columns/update-board-column.dto';
 import { CreateBoardColumnDto } from 'src/board-columns/create-board-column.dto';
 import { PatchOperationDto } from './patch-operation.dto';
-// import { applyPatch } from '@kandoo/shared/dist';
+import { applyPatch } from '@kandoo/shared';
 
 @Injectable()
 export class BoardsService {
@@ -41,14 +41,12 @@ export class BoardsService {
     });
   }
   async update(board: Board, patchOperationDto: PatchOperationDto) {
-    console.log(board, patchOperationDto);
-    return await new Promise((resolve) => resolve(board));
-    // const { operations } = patchOperationDto;
-    // const updatedBoard = applyPatch<Board>(board, operations).newDocument;
-    // console.log({ updatedBoard });
-    // return await new Promise((resolve) => {
-    //   resolve(board);
-    // });
+    const { operations } = patchOperationDto;
+    const updatedBoard = applyPatch<Board>(board, operations).newDocument;
+    console.log({ updatedBoard });
+    return await new Promise((resolve) => {
+      resolve(board);
+    });
   }
 
   async remove(id: string) {
