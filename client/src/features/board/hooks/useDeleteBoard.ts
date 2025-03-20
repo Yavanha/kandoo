@@ -16,7 +16,6 @@ export const useDeleteBoard = () => {
     unknown
   >({
     mutationFn: async (data: DeleteBoardType) => {
-      console.log(data.id);
       return await remove<Board>(`/boards/${data.id}`);
     },
     onSuccess: (_, { id: deletedId }) => {

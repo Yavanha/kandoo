@@ -5,6 +5,7 @@ export const isOpenBoardDialogAtom = atom<boolean>(false);
 export const isOpenBoardSelectAtom = atom<boolean>(false);
 export const isOpenBoardDropdownMenuAtom = atom<boolean>(false);
 export const boardFormModeAtom = atom<BoardActionMode>("CREATE");
+export const removedFieldsAtom = atom<string[]>([]);
 
 export const triggerCreateFormDialogAtom = atom(null, (_, set) => {
   set(isOpenBoardSelectAtom, false);
@@ -15,6 +16,7 @@ export const triggerCreateFormDialogAtom = atom(null, (_, set) => {
 export const triggerEditFormDialogAtom = atom(null, (_, set) => {
   set(isOpenBoardDropdownMenuAtom, false);
   set(boardFormModeAtom, "EDIT");
+  set(removedFieldsAtom, []);
   set(isOpenBoardDialogAtom, true);
 });
 

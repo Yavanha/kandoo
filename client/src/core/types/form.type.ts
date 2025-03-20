@@ -1,10 +1,10 @@
-type Item = {
+export type GenricListItemFormType = {
   itemId?: string;
   title: string;
 };
 
 export type GenericListFormType = {
-  list: Item[];
+  list: GenricListItemFormType[];
 };
 
 export type NamedListFormType = {

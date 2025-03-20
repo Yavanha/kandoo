@@ -9,7 +9,7 @@ import { DialogTrigger } from "@/core/components";
 
 export const BoardDropdownMenu = () => {
   const [isOpenBoardDropdownMenu, setIsOpenBoardDropdownMen] = useAtom(
-    isOpenBoardDropdownMenuAtom,
+    isOpenBoardDropdownMenuAtom
   );
   const triggerEditFormDialog = useSetAtom(triggerEditFormDialogAtom);
   const triggerDeleteFormDialog = useSetAtom(triggerDeleteFormDialogAtom);

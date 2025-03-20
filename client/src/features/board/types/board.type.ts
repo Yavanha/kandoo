@@ -1,5 +1,5 @@
-import { BoardColumn } from "@/features/board-column";
-import { z, Operation } from "@kandoo/shared";
+import { BoardColumn, UpdateBoardColumn } from "@/features/board-column";
+import { z } from "@kandoo/shared";
 import { BoardSchema, DeleteBoardShema } from "../schema";
 
 export interface Board {
@@ -10,12 +10,14 @@ export interface Board {
 
 export type CreateBoardType = {
   name: string;
-  columns?: Partial<BoardColumn>[];
+  columns?: Pick<BoardColumn, "title">[];
 };
 
 export type UpdateBoardType = {
   id?: string;
-  operations: Operation[];
+  name?: string;
+  columns?: UpdateBoardColumn[];
+  removeColumnIds?: string[];
 };
 
 export type DeleteBoardType = z.infer<typeof DeleteBoardShema>;

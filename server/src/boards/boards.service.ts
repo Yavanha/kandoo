@@ -1,22 +1,26 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { Repository } from 'typeorm';
 import { Board } from './board.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBoardDto } from './create-board.dto';
-// import { BoardColumn } from 'src/board-columns/board-column.entity';
 import { UpdateBoardColumnDto } from 'src/board-columns/update-board-column.dto';
 import { CreateBoardColumnDto } from 'src/board-columns/create-board-column.dto';
-import { PatchOperationDto } from './patch-operation.dto';
-import { applyPatch } from '@kandoo/shared';
+
+import { BoardColumn } from 'src/board-columns/board-column.entity';
+import { UpdateBoardDto } from './update-board.dto';
 
 @Injectable()
 export class BoardsService {
   constructor(
     @InjectRepository(Board)
     private readonly boardsRepository: Repository<Board>,
-    // @InjectRepository(BoardColumn)
-    // private readonly boardColumnsRepository: Repository<BoardColumn>,
+    @InjectRepository(BoardColumn)
+    private readonly boardColumnsRepository: Repository<BoardColumn>,
   ) {}
 
   async create(createBoardDto: CreateBoardDto) {
@@ -35,21 +39,46 @@ export class BoardsService {
     });
   }
 
+  public async tryToRetrieveBoard(id: string) {
+    const board = await this.findOne(id);
+    if (!board) {
+      throw new NotFoundException(`Board with id ${id} not found`);
+    }
+    return board;
+  }
   async findByName(name: string) {
     return await this.boardsRepository.findOne({
       where: { name },
     });
   }
-  async update(board: Board, patchOperationDto: PatchOperationDto) {
-    const { operations } = patchOperationDto;
-    const updatedBoard = applyPatch<Board>(board, operations).newDocument;
-    console.log({ updatedBoard });
-    return await new Promise((resolve) => {
-      resolve(board);
-    });
+  async update(boardId: string, updateBoarDto: UpdateBoardDto) {
+    const {
+      name: updateBoardName,
+      columns: updateBoardColumns,
+      removeColumnIds,
+    } = updateBoarDto;
+    if (!updateBoardName && !updateBoardColumns && !removeColumnIds) return;
+    const board = await this.tryToRetrieveBoard(boardId);
+    board.columns = await this.removeBoardColumns(removeColumnIds, board);
+
+    if (updateBoardName) {
+      await this.checkIfBoardExists(updateBoardName);
+      board.name = updateBoardName;
+    }
+
+    if (updateBoardColumns) {
+      const updateColumns = this.updateBoardColumns(
+        board.columns,
+        updateBoardColumns,
+      );
+      this.checkIfBoardColumnsUnique(updateColumns);
+      board.columns = updateColumns;
+    }
+    return await this.boardsRepository.save(board);
   }
 
   async remove(id: string) {
+    await this.tryToRetrieveBoard(id);
     await this.boardsRepository.delete(id);
   }
 
@@ -66,7 +95,7 @@ export class BoardsService {
   }
 
   private checkIfBoardColumnsUnique(
-    columns: (UpdateBoardColumnDto | CreateBoardColumnDto)[],
+    columns: (BoardColumn | CreateBoardColumnDto)[],
   ) {
     const uniqueColumnTitle = new Set(columns.map(({ title }) => title));
     if (uniqueColumnTitle.size < columns.length) {
@@ -74,5 +103,39 @@ export class BoardsService {
         'All Column Names must be unique, please provide unique names',
       );
     }
+  }
+
+  private async removeBoardColumns(ids: string[] | undefined, board: Board) {
+    if (ids) {
+      await this.boardColumnsRepository.delete(ids);
+      return board.columns.filter(({ id }) => !ids.includes(id));
+    }
+    return board.columns;
+  }
+
+  private updateBoardColumns(
+    existingBoardColumn: BoardColumn[],
+    updateBoardColumnsDto: UpdateBoardColumnDto[],
+  ) {
+    const columnMap = new Map<string, BoardColumn>(
+      existingBoardColumn.map((column) => [column.id, column]),
+    );
+    const newColumns: BoardColumn[] = [];
+    for (const { id, title } of updateBoardColumnsDto) {
+      if (id) {
+        const column = columnMap.get(id);
+        if (column) {
+          column.title = title;
+        }
+      } else {
+        newColumns.push(
+          this.boardColumnsRepository.create({
+            title,
+          }),
+        );
+      }
+    }
+    newColumns.unshift(...columnMap.values());
+    return newColumns;
   }
 }

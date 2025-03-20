@@ -7,6 +7,8 @@ import {
 } from "react-hook-form";
 import { GenericListFormType } from "@/core/types";
 import { RemovableField } from "./RemovableField";
+import { useSetAtom } from "jotai";
+import { removedFieldsAtom } from "@/features/board/store/atoms";
 
 export type RemovableFieldListProps<T extends GenericListFormType> = {
   label: string;
@@ -25,6 +27,7 @@ export const RemovableFieldList = <T extends GenericListFormType>({
   trigger,
 }: RemovableFieldListProps<T>) => {
   const { register } = control;
+  const setRemovedFiels = useSetAtom(removedFieldsAtom);
   const { fields, append, remove } = useFieldArray({
     control,
     name: "list",
@@ -32,9 +35,18 @@ export const RemovableFieldList = <T extends GenericListFormType>({
   });
 
   const handleAppend = () => {
-    append({ title: "" });
+    append(
+      { title: "" },
+      {
+        shouldFocus: true,
+      }
+    );
   };
   const handleRemove = (index: number) => {
+    if (fields[index].itemId) {
+      const id = fields[index].itemId;
+      setRemovedFiels((prev) => [...prev, id]);
+    }
     remove(index);
   };
 

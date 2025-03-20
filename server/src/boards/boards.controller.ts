@@ -6,14 +6,13 @@ import {
   Patch,
   Param,
   Delete,
-  NotFoundException,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './create-board.dto';
 import { FindOneParam } from 'src/common/params/find-one.param';
-import { PatchOperationDto } from './patch-operation.dto';
+import { UpdateBoardDto } from './update-board.dto';
 @Controller('api/boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
@@ -30,30 +29,20 @@ export class BoardsController {
 
   @Get(':id')
   async findOne(@Param() { id }: FindOneParam) {
-    return await this.tryToRetrieveBoard(id);
+    return await this.boardsService.tryToRetrieveBoard(id);
   }
 
   @Patch(':id')
   async update(
     @Param() { id }: FindOneParam,
-    @Body() patchOperationDto: PatchOperationDto,
+    @Body() updateBoardDto: UpdateBoardDto,
   ) {
-    const board = await this.tryToRetrieveBoard(id);
-    return this.boardsService.update(board, patchOperationDto);
+    return this.boardsService.update(id, updateBoardDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param() { id }: FindOneParam) {
-    await this.tryToRetrieveBoard(id);
     await this.boardsService.remove(id);
-  }
-
-  private async tryToRetrieveBoard(id: string) {
-    const board = await this.boardsService.findOne(id);
-    if (!board) {
-      throw new NotFoundException(`Board with id ${id} not found`);
-    }
-    return board;
   }
 }
