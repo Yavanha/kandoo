@@ -14,6 +14,16 @@ export const Route = createLazyFileRoute("/boards")({
   component: Index,
 });
 
+/**
+ * Renders the board management interface.
+ *
+ * This component displays a toolbar that includes a logo button and either a board selection dropdown (if boards are available)
+ * or a trigger to open a dialog for creating a new board. It also provides a button for adding new tasks—which is disabled if the
+ * active board has no columns—and optionally shows a board dropdown menu when an active board is present. Additionally, it renders
+ * nested routes and a dialog for board management within a Suspense wrapper to handle asynchronous loading states.
+ *
+ * @returns The JSX element representing the board management UI.
+ */
 export function Index() {
   const boards: Board[] = useBoards();
   const activeBoard = useBoard();
