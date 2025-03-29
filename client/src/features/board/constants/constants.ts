@@ -1,7 +1,14 @@
 export const GET_BOARDS_CACHE_KEY = "GET_BOARDS";
 export const GET_BOARD_CACHE_KEY = "GET_BOARD";
 
-//
-export const DELETE_BOARD_DIALOG = "Delete this board?";
+//DIALOG
+export const CREATE_BOARD_DIALOG_TITLE = "Add New Board";
+export const EDIT_BOARD_DIALOG_TITLE = "Edit Board";
+export const DELETE_BOARD_DIALOG_TITLE = "Delete this board?";
 export const DELETE_BOARD_MESSAGE =
   "Are you sure you want to delete the ‘Platform Launch’ board? This action will remove all columns and tasks and cannot be reversed.";
+
+//FORM
+export const CREATE_BOARD_FORM_SUBMIT = "Create New Board";
+export const EDIT_BOARD_FORM_SUBMIT = "Save Changes";
+export const DELETE_BOARD_FORM_SUBMIT = "Delete";

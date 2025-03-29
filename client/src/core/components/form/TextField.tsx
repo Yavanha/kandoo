@@ -1,5 +1,4 @@
 import { Input } from "@/core/desing-system";
-import { Form } from "radix-ui";
 import {
   FieldError,
   InternalFieldName,
@@ -18,15 +17,9 @@ export const TextField = <T extends InternalFieldName>({
   error,
 }: TextFieldProps<T>) => {
   return (
-    <Form.Field name="" className="mb-6">
-      <Form.Control asChild>
-        <Input placeholder={placeholder} {...field} hasError={!!error} />
-      </Form.Control>
-      {error && (
-        <Form.Message className="text-destructive body-m">
-          {error.message}
-        </Form.Message>
-      )}
-    </Form.Field>
+    <div className="mb-6">
+      <Input placeholder={placeholder} {...field} hasError={!!error} />
+      {error && <p className="text-destructive body-m pt-1">{error.message}</p>}
+    </div>
   );
 };

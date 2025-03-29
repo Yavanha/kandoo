@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Board } from './board.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBoardDto } from './create-board.dto';
@@ -21,6 +21,7 @@ export class BoardsService {
     private readonly boardsRepository: Repository<Board>,
     @InjectRepository(BoardColumn)
     private readonly boardColumnsRepository: Repository<BoardColumn>,
+    private dataSource: DataSource,
   ) {}
 
   async create(createBoardDto: CreateBoardDto) {
@@ -72,23 +73,81 @@ export class BoardsService {
       removeColumnIds,
     } = updateBoarDto;
     if (!updateBoardName && !updateBoardColumns && !removeColumnIds) return;
-    const board = await this.tryToRetrieveBoard(boardId);
-    board.columns = await this.removeBoardColumns(removeColumnIds, board);
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const board = await queryRunner.manager.findOne(Board, {
+        where: { id: boardId },
+        relations: ['columns'],
+      });
+      if (!board) {
+        throw new NotFoundException(`Board with id ${boardId} not found`);
+      }
 
-    if (updateBoardName) {
-      await this.checkIfBoardExists(updateBoardName);
-      board.name = updateBoardName;
+      if (removeColumnIds) {
+        await queryRunner.manager.delete(BoardColumn, removeColumnIds);
+        board.columns = board.columns.filter(
+          ({ id }) => !removeColumnIds.includes(id),
+        );
+      }
+
+      if (updateBoardName) {
+        const existingBoard = await queryRunner.manager.findOne(Board, {
+          where: { name: updateBoardName },
+        });
+        if (existingBoard) {
+          throw new ConflictException(
+            `Board with name ${updateBoardName} already exists`,
+          );
+        }
+        board.name = updateBoardName;
+      }
+
+      if (updateBoardColumns) {
+        const updateColumns = this.updateBoardColumns(
+          board.columns,
+          updateBoardColumns,
+        );
+        this.checkIfBoardColumnsUnique(updateColumns);
+        board.columns = updateColumns;
+      }
+
+      const newBoard = await queryRunner.manager.save(Board, board);
+      await queryRunner.commitTransaction();
+      return newBoard;
+    } catch (error) {
+      console.error('Error occurred during transaction:', error);
+      await queryRunner.rollbackTransaction();
+      throw new Error('Transaction failed');
+    } finally {
+      await queryRunner.release();
     }
 
-    if (updateBoardColumns) {
-      const updateColumns = this.updateBoardColumns(
-        board.columns,
-        updateBoardColumns,
-      );
-      this.checkIfBoardColumnsUnique(updateColumns);
-      board.columns = updateColumns;
-    }
-    return await this.boardsRepository.save(board);
+    // const {
+    //   name: updateBoardName,
+    //   columns: updateBoardColumns,
+    //   removeColumnIds,
+    // } = updateBoarDto;
+
+    // if (!updateBoardName && !updateBoardColumns && !removeColumnIds) return;
+    // const board = await this.tryToRetrieveBoard(boardId);
+    // board.columns = await this.removeBoardColumns(removeColumnIds, board);
+
+    // if (updateBoardName) {
+    //   await this.checkIfBoardExists(updateBoardName);
+    //   board.name = updateBoardName;
+    // }
+
+    // if (updateBoardColumns) {
+    //   const updateColumns = this.updateBoardColumns(
+    //     board.columns,
+    //     updateBoardColumns,
+    //   );
+    //   this.checkIfBoardColumnsUnique(updateColumns);
+    //   board.columns = updateColumns;
+    // }
+    // return await this.boardsRepository.save(board);
   }
 
   async remove(id: string) {

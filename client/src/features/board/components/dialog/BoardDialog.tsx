@@ -1,8 +1,8 @@
 import { useAtom, useAtomValue } from "jotai";
-import { boardFormModeAtom, isOpenBoardDialogAtom } from "../store/atoms";
+import { boardFormModeAtom, isOpenBoardDialogAtom } from "../../store/atoms";
 import { Dialog } from "@/core/components";
 
-import { useBoardFormMap } from "../hooks";
+import { useBoardFormMap } from "../../hooks";
 
 export const BoardDialog = () => {
   const [isOpenBoardDialog, setIsOpenBoardDialog] = useAtom(

@@ -1,5 +1,5 @@
 import { atomWithSuspenseQuery } from "jotai-tanstack-query";
-import { GET_BOARD_CACHE_KEY, GET_BOARDS_CACHE_KEY } from "../constants";
+import { GET_BOARD_CACHE_KEY } from "../constants";
 import { getBoard } from "../services/api";
 import { queryOptions } from "@tanstack/react-query";
 import { useAtom } from "jotai";
@@ -7,8 +7,8 @@ import { boardIdAtom } from "../store/atoms";
 
 export const getBoardQueryOptions = (boardId: string | null) =>
   queryOptions({
-    queryKey: [GET_BOARDS_CACHE_KEY, GET_BOARD_CACHE_KEY, boardId],
-    queryFn: async ({ queryKey: [, , id] }) => {
+    queryKey: [GET_BOARD_CACHE_KEY, boardId],
+    queryFn: async ({ queryKey: [, id] }) => {
       if (!id) return null;
       return getBoard(id);
     },
@@ -19,7 +19,7 @@ export const boardAtom = atomWithSuspenseQuery((get) =>
 );
 
 export const useBoard = () => {
-  const atomValue = useAtom(boardAtom);
+  const [atomValue] = useAtom(boardAtom);
 
-  return atomValue[0] ? atomValue[0].data : null;
+  return atomValue ? atomValue.data : null;
 };

@@ -1,4 +1,4 @@
-import { useEditBoardForm } from "../hooks";
+import { useEditBoardForm } from "../../hooks";
 import { BoardForm } from "./BoardForm";
 
 export const EditBoardForm = () => {

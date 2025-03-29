@@ -1,1 +1,1 @@
-export * from "./BoardColumns";
+export * from "./BoardColumnList";

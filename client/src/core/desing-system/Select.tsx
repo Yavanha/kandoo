@@ -1,5 +1,13 @@
 import { FC, PropsWithChildren } from "react";
-import { Select as RadixSelect } from "radix-ui";
+import {
+  Content,
+  Icon,
+  Item,
+  ItemText,
+  Select as RadixSelect,
+  Trigger,
+  Value,
+} from "@radix-ui/react-select";
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import classNames from "classnames";
 type SelectProps = {
@@ -23,20 +31,20 @@ export const Select: FC<SelectProps> = ({
   const selecteIcon = isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />;
 
   return (
-    <RadixSelect.Root
+    <RadixSelect
       value={selectedValue}
       open={isOpen}
       onOpenChange={onOpenChange}
       onValueChange={onValueChange}
     >
-      <RadixSelect.Trigger
+      <Trigger
         aria-label="Board"
         className="inline-flex items-center heading-l gap-x-2 cursor-pointer user-RadixSelect-none"
       >
-        <RadixSelect.Value placeholder={placeholder} />
-        <RadixSelect.Icon>{selecteIcon}</RadixSelect.Icon>
-      </RadixSelect.Trigger>
-      <RadixSelect.Content
+        <Value placeholder={placeholder} />
+        <Icon>{selecteIcon}</Icon>
+      </Trigger>
+      <Content
         position="popper"
         sideOffset={10}
         className=" rounded-md bg-white shadow-md border-lines-light border-solid border py-4 pr-6 min-w-[16.5rem]"
@@ -46,7 +54,7 @@ export const Select: FC<SelectProps> = ({
         </p>
         <div className="overflow-y-auto max-h-[15rem]">
           {values.map((value, index) => (
-            <RadixSelect.Item
+            <Item
               key={`value-${index}`}
               value={value}
               className={classNames("  text-medium-grey  cursor-pointer", {
@@ -60,16 +68,14 @@ export const Select: FC<SelectProps> = ({
                   alt="board icon"
                   className="block fill-white "
                 />
-                <RadixSelect.ItemText className="heading-m">
-                  {value}
-                </RadixSelect.ItemText>
+                <ItemText className="heading-m">{value}</ItemText>
               </div>
-            </RadixSelect.Item>
+            </Item>
           ))}
         </div>
 
         {children}
-      </RadixSelect.Content>
-    </RadixSelect.Root>
+      </Content>
+    </RadixSelect>
   );
 };

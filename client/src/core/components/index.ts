@@ -7,3 +7,4 @@ export * from "./form/SubmitButton";
 export * from "./form/RemovableFieldList";
 export * from "./Typography/Paragraph";
 export * from "./hydrate-atoms/HydrateAtoms";
+export * from "./status-icons/TooltipStatusIcons";

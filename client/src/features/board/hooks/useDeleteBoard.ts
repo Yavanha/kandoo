@@ -2,16 +2,19 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Board, DeleteBoardType } from "../types";
 import { remove } from "@/core/api";
 import { GET_BOARDS_CACHE_KEY } from "../constants/constants";
-import { AxioResponsError } from "@/core/types";
+import { AxiosResponseError } from "@/core/types";
 import { AxiosError } from "axios";
 import { useNavigate } from "@tanstack/react-router";
+import { boardIdAtom } from "../store/atoms";
+import { useSetAtom } from "jotai";
 
 export const useDeleteBoard = () => {
   const queryClient = useQueryClient();
+  const setBoardIdAtom = useSetAtom(boardIdAtom);
   const navigate = useNavigate();
   const mutation = useMutation<
     Board,
-    AxiosError<AxioResponsError>,
+    AxiosError<AxiosResponseError>,
     DeleteBoardType,
     unknown
   >({
@@ -33,6 +36,7 @@ export const useDeleteBoard = () => {
           },
         });
       } else {
+        setBoardIdAtom(null);
         navigate({
           from: "/boards",
         });

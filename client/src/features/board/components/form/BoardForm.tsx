@@ -1,7 +1,7 @@
 import { RemovableFieldList, SubmitButton, TextField } from "@/core/components";
-import { Form } from "radix-ui";
+import { Form } from "@radix-ui/react-form";
 import { SubmitHandler, UseFormReturn } from "react-hook-form";
-import { BoardFormType } from "../types";
+import { BoardFormType } from "../../types";
 import { FC } from "react";
 
 type BoardFormProps = {
@@ -24,7 +24,7 @@ export const BoardForm: FC<BoardFormProps> = ({
   } = form;
 
   return (
-    <Form.Root onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <TextField
         error={errors.name}
         field={register("name", {
@@ -46,6 +46,6 @@ export const BoardForm: FC<BoardFormProps> = ({
         errors={errors}
         isDirty={isDirty}
       />
-    </Form.Root>
+    </Form>
   );
 };

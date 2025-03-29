@@ -1,15 +1,15 @@
 import { patch } from "@/core/api";
-import { AxioResponsError } from "@/core/types";
+import { AxiosResponseError } from "@/core/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Board, UpdateBoardType } from "../types";
-import { GET_BOARDS_CACHE_KEY } from "../constants";
+import { GET_BOARD_CACHE_KEY, GET_BOARDS_CACHE_KEY } from "../constants";
 
 export const useEditBoard = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<
     Board,
-    AxiosError<AxioResponsError>,
+    AxiosError<AxiosResponseError>,
     UpdateBoardType,
     unknown
   >({
@@ -17,9 +17,12 @@ export const useEditBoard = () => {
       const { id, ...updateBoard } = data;
       return await patch<Board, UpdateBoardType>(`/boards/${id}`, updateBoard);
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey.includes(GET_BOARDS_CACHE_KEY),
+        predicate: (query) =>
+          query.queryKey[0] === GET_BOARDS_CACHE_KEY ||
+          (query.queryKey[0] === GET_BOARD_CACHE_KEY &&
+            query.queryKey[1] === data.id),
       });
     },
   });

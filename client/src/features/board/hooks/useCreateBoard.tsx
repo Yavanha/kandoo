@@ -3,7 +3,7 @@ import { Board, CreateBoardType } from "../types";
 import { post } from "@/core/api";
 import { GET_BOARDS_CACHE_KEY } from "../constants/constants";
 import { AxiosError } from "axios";
-import { AxioResponsError } from "@/core/types";
+import { AxiosResponseError } from "@/core/types";
 
 import { useNavigate } from "@tanstack/react-router";
 
@@ -12,7 +12,7 @@ export const useCreateBoard = () => {
   const navigate = useNavigate();
   const mutation = useMutation<
     Board,
-    AxiosError<AxioResponsError>,
+    AxiosError<AxiosResponseError>,
     CreateBoardType
   >({
     mutationFn: async (data: CreateBoardType) => {

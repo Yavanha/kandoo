@@ -1,1 +1,1 @@
-export * from "./types/BoardColumn";
+export * from "./types/board-column.type";
