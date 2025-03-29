@@ -13,6 +13,7 @@ import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './create-board.dto';
 import { FindOneParam } from 'src/common/params/find-one.param';
 import { UpdateBoardDto } from './update-board.dto';
+import { CreateBoardColumnDto } from 'src/board-columns/create-board-column.dto';
 @Controller('api/boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
@@ -20,6 +21,14 @@ export class BoardsController {
   @Post()
   async create(@Body() createBoardDto: CreateBoardDto) {
     return await this.boardsService.create(createBoardDto);
+  }
+
+  @Post(':id/columns')
+  async addColumnToBoard(
+    @Param() { id }: FindOneParam,
+    @Body() createBoardColumnDto: CreateBoardColumnDto,
+  ) {
+    return await this.boardsService.addColumnToBoard(id, createBoardColumnDto);
   }
 
   @Get()

@@ -28,6 +28,20 @@ export class BoardsService {
     return await this.boardsRepository.save(createBoardDto);
   }
 
+  async addColumnToBoard(
+    boardId: string,
+    createBoardColumnDto: CreateBoardColumnDto,
+  ) {
+    const board = await this.tryToRetrieveBoard(boardId);
+    const { title } = createBoardColumnDto;
+    await this.checkIfBoardColumnExists(boardId, title);
+    const newBoardColumn = this.boardColumnsRepository.create({
+      ...createBoardColumnDto,
+      boardId: board.id,
+    });
+    return await this.boardColumnsRepository.save(newBoardColumn);
+  }
+
   async findAll() {
     return await this.boardsRepository.find();
   }
@@ -91,6 +105,18 @@ export class BoardsService {
     const existingBoard = await this.findByName(name);
     if (existingBoard) {
       throw new ConflictException(`Board with name ${name} already exists`);
+    }
+  }
+
+  private async checkIfBoardColumnExists(boardId: string, title: string) {
+    const existingBoardColumn = await this.boardColumnsRepository.findOne({
+      where: { title, boardId },
+    });
+    console.log('existingBoardColumn', existingBoardColumn);
+    if (existingBoardColumn) {
+      throw new ConflictException(
+        `Board Column with the title ${title} already exists in the board`,
+      );
     }
   }
 
