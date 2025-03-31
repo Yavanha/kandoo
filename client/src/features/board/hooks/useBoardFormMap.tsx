@@ -8,6 +8,8 @@ import {
 import { BoardActionMode } from "../types";
 import { useBoard } from "./useBoard";
 import { DeleteBoardForm } from "../components/form/DeleteBoardForm";
+import { CreateTaskForm } from "@/features/tasks/components/form/CreateTaskForm";
+import { CREATE_TASK_DIALOG_TITLE } from "@/features/tasks/constants";
 
 export const useBoardFormMap = () => {
   const activeBoard = useBoard();
@@ -33,6 +35,14 @@ export const useBoardFormMap = () => {
     boardFormMap.set("DELETE", {
       element: <DeleteBoardForm />,
       dialogTitle: DELETE_BOARD_DIALOG_TITLE,
+    });
+    boardFormMap.set("CREATE_TASK", {
+      element: (
+        <CreateTaskForm
+          status={activeBoard.columns.map(({ title }) => title)}
+        />
+      ),
+      dialogTitle: CREATE_TASK_DIALOG_TITLE,
     });
   } else {
     boardFormMap.delete("EDIT");

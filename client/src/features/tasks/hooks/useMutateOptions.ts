@@ -1,10 +1,10 @@
 import { FieldValues, UseFormReset, UseFormSetError } from "react-hook-form";
-import { Board } from "../types";
+import { Task } from "../types/task.type";
 import { AxiosResponseError } from "@/core/types";
 import { MutateOptions } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useSetAtom } from "jotai";
-import { isOpenDialogAtom } from "../store/atoms";
+import { isOpenDialogAtom } from "@/features/board/store/atoms";
 
 export const useMutationOptions = <T, D extends FieldValues>(
   reset: UseFormReset<D> | null,
@@ -12,9 +12,12 @@ export const useMutationOptions = <T, D extends FieldValues>(
   resetValues?: D
 ) => {
   const setIsOpenDialog = useSetAtom(isOpenDialogAtom);
-  const options:
-    | MutateOptions<Board, AxiosError<AxiosResponseError, unknown>, T, unknown>
-    | undefined = {
+  const options: MutateOptions<
+    Task,
+    AxiosError<AxiosResponseError>,
+    T,
+    unknown
+  > = {
     onSuccess: () => {
       if (reset && resetValues) {
         reset(resetValues);

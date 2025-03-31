@@ -19,7 +19,7 @@ export const BoardColumnList: FC<BoardColumnListProps> = ({ list }) => {
   if (!list.length && isBoardColumnCreateFormActive) {
     return (
       <div className="px-7 pt-4   ">
-        <CreateBoardColumnForm />;
+        <CreateBoardColumnForm />
       </div>
     );
   }

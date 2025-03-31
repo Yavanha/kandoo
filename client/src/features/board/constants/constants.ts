@@ -12,3 +12,7 @@ export const DELETE_BOARD_MESSAGE =
 export const CREATE_BOARD_FORM_SUBMIT = "Create New Board";
 export const EDIT_BOARD_FORM_SUBMIT = "Save Changes";
 export const DELETE_BOARD_FORM_SUBMIT = "Delete";
+export const BOARD_NAME_LABEL = "Board Name";
+export const BOARD_COLUMN_LABEL = "Board Column";
+export const BOARD_ADD_NEW_COLUMN_LABEL = "Add new Column";
+export const BOARD_PLACEHOLDER_TEXT = "e.g. Web site";

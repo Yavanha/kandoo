@@ -1,8 +1,8 @@
 import classNames from "classnames";
-import { FC } from "react";
+import { DetailedHTMLProps, FC, LabelHTMLAttributes } from "react";
 
-type LabelProps = React.DetailedHTMLProps<
-  React.LabelHTMLAttributes<HTMLLabelElement>,
+type LabelProps = DetailedHTMLProps<
+  LabelHTMLAttributes<HTMLLabelElement>,
   HTMLLabelElement
 > & {
   label: string;
@@ -15,7 +15,7 @@ export const Label: FC<LabelProps> = (props) => {
     <label
       {...labelProps}
       className={classNames(
-        " font-bold body-l mb-2 inline-block",
+        " font-bold body-l mb-2 inline-block capitalize",
         {
           "text-medium-grey": !hasError,
         },

@@ -24,4 +24,4 @@ export type DeleteBoardType = z.infer<typeof DeleteBoardShema>;
 
 export type BoardFormType = z.infer<typeof BoardSchema>;
 
-export type BoardActionMode = "CREATE" | "EDIT" | "DELETE";
+export type BoardActionMode = "CREATE" | "EDIT" | "DELETE" | "CREATE_TASK";

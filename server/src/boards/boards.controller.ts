@@ -38,7 +38,7 @@ export class BoardsController {
 
   @Get(':id')
   async findOne(@Param() { id }: FindOneParam) {
-    return await this.boardsService.tryToRetrieveBoard(id);
+    return await this.boardsService.findOne(id);
   }
 
   @Patch(':id')

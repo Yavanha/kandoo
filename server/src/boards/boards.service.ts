@@ -4,223 +4,102 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { Board } from './board.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBoardDto } from './create-board.dto';
-import { UpdateBoardColumnDto } from 'src/board-columns/update-board-column.dto';
-import { CreateBoardColumnDto } from 'src/board-columns/create-board-column.dto';
 
-import { BoardColumn } from 'src/board-columns/board-column.entity';
 import { UpdateBoardDto } from './update-board.dto';
+import { BoardColumnsService } from 'src/board-columns/board-columns.service';
 
 @Injectable()
 export class BoardsService {
   constructor(
-    @InjectRepository(Board)
-    private readonly boardsRepository: Repository<Board>,
-    @InjectRepository(BoardColumn)
-    private readonly boardColumnsRepository: Repository<BoardColumn>,
     private dataSource: DataSource,
+    private boardColumnsService: BoardColumnsService,
   ) {}
 
-  async create(createBoardDto: CreateBoardDto) {
-    await this.checkIfBoardIsValid(createBoardDto);
-    return await this.boardsRepository.save(createBoardDto);
-  }
-
-  async addColumnToBoard(
-    boardId: string,
-    createBoardColumnDto: CreateBoardColumnDto,
-  ) {
-    const board = await this.tryToRetrieveBoard(boardId);
-    const { title } = createBoardColumnDto;
-    await this.checkIfBoardColumnExists(boardId, title);
-    const newBoardColumn = this.boardColumnsRepository.create({
-      ...createBoardColumnDto,
-      boardId: board.id,
+  public async create(createBoardDto: CreateBoardDto) {
+    await this.confirmBoardIntegrity(createBoardDto);
+    const board = this.dataSource.manager.create(Board, {
+      ...createBoardDto,
     });
-    return await this.boardColumnsRepository.save(newBoardColumn);
+    return await this.dataSource.manager.save(Board, board);
   }
 
-  async findAll() {
-    return await this.boardsRepository.find();
+  public async findAll() {
+    return await this.dataSource.manager.find(Board);
   }
 
-  async findOne(id: string) {
-    return await this.boardsRepository.findOne({
+  public async findOne(id: string) {
+    return this.tryToRetrieveBoardById(id, this.dataSource.manager);
+  }
+
+  public async tryToRetrieveBoardById(id: string, em?: EntityManager) {
+    const entityManager = this.ensureEntityManager(em);
+    const board = await entityManager.findOne(Board, {
       where: { id },
       relations: ['columns'],
     });
-  }
-
-  public async tryToRetrieveBoard(id: string) {
-    const board = await this.findOne(id);
     if (!board) {
       throw new NotFoundException(`Board with id ${id} not found`);
     }
     return board;
   }
-  async findByName(name: string) {
-    return await this.boardsRepository.findOne({
-      where: { name },
-    });
-  }
-  async update(boardId: string, updateBoarDto: UpdateBoardDto) {
+
+  public async update(boardId: string, updateBoarDto: UpdateBoardDto) {
     const {
       name: updateBoardName,
       columns: updateBoardColumns,
       removeColumnIds,
     } = updateBoarDto;
-    if (!updateBoardName && !updateBoardColumns && !removeColumnIds) return;
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try {
-      const board = await queryRunner.manager.findOne(Board, {
-        where: { id: boardId },
-        relations: ['columns'],
-      });
-      if (!board) {
-        throw new NotFoundException(`Board with id ${boardId} not found`);
-      }
+    if (!updateBoardName && !updateBoardColumns && !removeColumnIds) {
+      return await this.tryToRetrieveBoardById(boardId);
+    }
 
-      if (removeColumnIds) {
-        await queryRunner.manager.delete(BoardColumn, removeColumnIds);
-        board.columns = board.columns.filter(
-          ({ id }) => !removeColumnIds.includes(id),
-        );
-      }
+    return await this.dataSource.transaction(async (manager) => {
+      const board = await this.tryToRetrieveBoardById(boardId, manager);
 
       if (updateBoardName) {
-        const existingBoard = await queryRunner.manager.findOne(Board, {
-          where: { name: updateBoardName },
-        });
-        if (existingBoard) {
-          throw new ConflictException(
-            `Board with name ${updateBoardName} already exists`,
-          );
-        }
+        await this.validateUniqueBoardName(updateBoardName, manager);
         board.name = updateBoardName;
       }
 
-      if (updateBoardColumns) {
-        const updateColumns = this.updateBoardColumns(
-          board.columns,
-          updateBoardColumns,
-        );
-        this.checkIfBoardColumnsUnique(updateColumns);
-        board.columns = updateColumns;
-      }
+      board.columns = await this.boardColumnsService.update(
+        removeColumnIds,
+        updateBoardColumns,
+        boardId,
+        manager,
+      );
 
-      const newBoard = await queryRunner.manager.save(Board, board);
-      await queryRunner.commitTransaction();
-      return newBoard;
-    } catch (error) {
-      console.error('Error occurred during transaction:', error);
-      await queryRunner.rollbackTransaction();
-      throw new Error('Transaction failed');
-    } finally {
-      await queryRunner.release();
-    }
-
-    // const {
-    //   name: updateBoardName,
-    //   columns: updateBoardColumns,
-    //   removeColumnIds,
-    // } = updateBoarDto;
-
-    // if (!updateBoardName && !updateBoardColumns && !removeColumnIds) return;
-    // const board = await this.tryToRetrieveBoard(boardId);
-    // board.columns = await this.removeBoardColumns(removeColumnIds, board);
-
-    // if (updateBoardName) {
-    //   await this.checkIfBoardExists(updateBoardName);
-    //   board.name = updateBoardName;
-    // }
-
-    // if (updateBoardColumns) {
-    //   const updateColumns = this.updateBoardColumns(
-    //     board.columns,
-    //     updateBoardColumns,
-    //   );
-    //   this.checkIfBoardColumnsUnique(updateColumns);
-    //   board.columns = updateColumns;
-    // }
-    // return await this.boardsRepository.save(board);
+      return await manager.save(Board, board);
+    });
   }
 
   async remove(id: string) {
-    await this.tryToRetrieveBoard(id);
-    await this.boardsRepository.delete(id);
+    await this.tryToRetrieveBoardById(id, this.dataSource.manager);
+    await this.dataSource.manager.delete(Board, id);
+  }
+  private async confirmBoardIntegrity(
+    board: CreateBoardDto,
+    em?: EntityManager,
+  ) {
+    const entityManager = em || this.dataSource.manager;
+    await this.validateUniqueBoardName(board.name, entityManager);
+    if (board.columns)
+      this.boardColumnsService.ensureUniqueColumnTitles(board.columns);
   }
 
-  private async checkIfBoardIsValid(board: CreateBoardDto) {
-    await this.checkIfBoardExists(board.name);
-    if (board.columns) this.checkIfBoardColumnsUnique(board.columns);
-  }
-
-  private async checkIfBoardExists(name: string) {
-    const existingBoard = await this.findByName(name);
+  private async validateUniqueBoardName(name: string, em?: EntityManager) {
+    const entityManager = this.ensureEntityManager(em);
+    const existingBoard = await entityManager.findOne(Board, {
+      where: { name },
+    });
     if (existingBoard) {
       throw new ConflictException(`Board with name ${name} already exists`);
     }
   }
 
-  private async checkIfBoardColumnExists(boardId: string, title: string) {
-    const existingBoardColumn = await this.boardColumnsRepository.findOne({
-      where: { title, boardId },
-    });
-    console.log('existingBoardColumn', existingBoardColumn);
-    if (existingBoardColumn) {
-      throw new ConflictException(
-        `Board Column with the title ${title} already exists in the board`,
-      );
-    }
-  }
-
-  private checkIfBoardColumnsUnique(
-    columns: (BoardColumn | CreateBoardColumnDto)[],
-  ) {
-    const uniqueColumnTitle = new Set(columns.map(({ title }) => title));
-    if (uniqueColumnTitle.size < columns.length) {
-      throw new ConflictException(
-        'All Column Names must be unique, please provide unique names',
-      );
-    }
-  }
-
-  private async removeBoardColumns(ids: string[] | undefined, board: Board) {
-    if (ids) {
-      await this.boardColumnsRepository.delete(ids);
-      return board.columns.filter(({ id }) => !ids.includes(id));
-    }
-    return board.columns;
-  }
-
-  private updateBoardColumns(
-    existingBoardColumn: BoardColumn[],
-    updateBoardColumnsDto: UpdateBoardColumnDto[],
-  ) {
-    const columnMap = new Map<string, BoardColumn>(
-      existingBoardColumn.map((column) => [column.id, column]),
-    );
-    const newColumns: BoardColumn[] = [];
-    for (const { id, title } of updateBoardColumnsDto) {
-      if (id) {
-        const column = columnMap.get(id);
-        if (column) {
-          column.title = title;
-        }
-      } else {
-        newColumns.push(
-          this.boardColumnsRepository.create({
-            title,
-          }),
-        );
-      }
-    }
-    newColumns.unshift(...columnMap.values());
-    return newColumns;
+  private ensureEntityManager(em?: EntityManager) {
+    return em || this.dataSource.manager;
   }
 }

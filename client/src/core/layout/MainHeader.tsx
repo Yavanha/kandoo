@@ -1,6 +1,9 @@
 import { BoardSelect, BoardDropdownMenu } from "@/features/board/components";
 import { useBoard, useBoards } from "@/features/board/hooks";
-import { triggerCreateFormDialogAtom } from "@/features/board/store/atoms";
+import {
+  triggerCreateFormDialogAtom,
+  triggerCreateTaskFormDialogAtom,
+} from "@/features/board/store/atoms";
 import { Board } from "@/features/board/types";
 import { useSetAtom } from "jotai";
 import { DialogTrigger } from "../components";
@@ -11,6 +14,9 @@ export const MainHeader = () => {
   const activeBoard = useBoard();
   const hasColumns = activeBoard && activeBoard.columns.length > 0;
   const triggerCreateFormDialog = useSetAtom(triggerCreateFormDialogAtom);
+  const triggerCreateTaskFormDialog = useSetAtom(
+    triggerCreateTaskFormDialogAtom
+  );
 
   let selectOrDialogTrigger = (
     <DialogTrigger openBoardDialog={triggerCreateFormDialog}>
@@ -32,16 +38,20 @@ export const MainHeader = () => {
         </Button>
         {selectOrDialogTrigger}
       </div>
-      <div className="flex items-center gap-x-4">
-        <Button
-          role="add new tasks to board"
-          disabled={!hasColumns}
-          className="bg-primary py-2.5 px-5  rounded-full disabled:bg-primary-hover"
-        >
-          <img src="/icons/icon-add-task-mobile.svg" alt="add task" />
-        </Button>
-        {activeBoard && <BoardDropdownMenu />}
-      </div>
+      {activeBoard && (
+        <div className="flex items-center gap-x-4">
+          <DialogTrigger
+            openBoardDialog={triggerCreateTaskFormDialog}
+            disabled={!hasColumns}
+          >
+            <div className="bg-primary py-2.5 px-5  rounded-full disabled:bg-primary-hover">
+              <img src="/icons/icon-add-task-mobile.svg" alt="add task" />
+            </div>
+          </DialogTrigger>
+
+          <BoardDropdownMenu />
+        </div>
+      )}
     </Toolbar>
   );
 };

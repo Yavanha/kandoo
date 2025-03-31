@@ -7,11 +7,11 @@ import {
 import { Button } from "@/core/desing-system";
 import { useDeleteBoardForm } from "../../hooks";
 import { useSetAtom } from "jotai";
-import { isOpenBoardDialogAtom } from "../../store/atoms";
+import { isOpenDialogAtom } from "../../store/atoms";
 
 export const DeleteBoardForm = () => {
   const { form, onSubmit } = useDeleteBoardForm();
-  const setIsOpenBoardDialog = useSetAtom(isOpenBoardDialogAtom);
+  const setIsOpenBoardDialog = useSetAtom(isOpenDialogAtom);
   const {
     handleSubmit,
     formState: { errors },
