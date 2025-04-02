@@ -29,11 +29,4 @@ export const triggerDeleteFormDialogAtom = atom(null, (_, set) => {
   set(isOpenDialogAtom, true);
 });
 
-export const triggerCreateTaskFormDialogAtom = atom(null, (_, set) => {
-  set(isOpenBoardDropdownMenuAtom, false);
-  set(isBoardColumnCreateFormActiveAtom, false);
-  set(boardFormModeAtom, "CREATE_TASK");
-  set(isOpenDialogAtom, true);
-});
-
 export const boardIdAtom = atom<string | null>(null);

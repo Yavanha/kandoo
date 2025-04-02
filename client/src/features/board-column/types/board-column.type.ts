@@ -1,7 +1,10 @@
+import { Task } from "@/features/tasks/types";
+
 export interface BoardColumn {
   id: string;
   title: string;
   boardId: string;
+  tasks: Task[];
 }
 
 export interface UpdateBoardColumn {
@@ -9,6 +12,6 @@ export interface UpdateBoardColumn {
   title: string;
 }
 
-export type CreateBoardColumnType = {
+export type CreateBoardColumn = {
   title: string;
 };

@@ -1,1 +1,1 @@
-export * from "./taks.constant";
+export * from "./constants";

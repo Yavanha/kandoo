@@ -8,5 +8,6 @@ import { Subtask } from './subtask.entity';
   imports: [TypeOrmModule.forFeature([Subtask])],
   controllers: [SubtasksController],
   providers: [SubtasksService],
+  exports: [SubtasksService],
 })
 export class SubtasksModule {}

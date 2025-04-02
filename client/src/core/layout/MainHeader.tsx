@@ -1,13 +1,11 @@
 import { BoardSelect, BoardDropdownMenu } from "@/features/board/components";
 import { useBoard, useBoards } from "@/features/board/hooks";
-import {
-  triggerCreateFormDialogAtom,
-  triggerCreateTaskFormDialogAtom,
-} from "@/features/board/store/atoms";
+import { triggerCreateFormDialogAtom } from "@/features/board/store/atoms";
 import { Board } from "@/features/board/types";
 import { useSetAtom } from "jotai";
 import { DialogTrigger } from "../components";
 import { Toolbar, Button } from "@radix-ui/react-toolbar";
+import { triggerCreateTaskFormDialogAtom } from "@/features/tasks/store";
 
 export const MainHeader = () => {
   const boards: Board[] = useBoards();

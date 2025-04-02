@@ -21,7 +21,6 @@ export const BoardSelect: FC<SelectBoardProps> = ({ boards }) => {
   );
   const boardNames = boards.map(({ name }) => name);
   const activeBoard = useBoard();
-  console.log({ boards, activeBoard });
   const selecteValueChangeHandler = (value: string) => {
     const selectedBoard = boards.find((board) => board.name === value);
     if (selectedBoard) {

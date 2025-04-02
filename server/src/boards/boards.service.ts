@@ -10,6 +10,7 @@ import { CreateBoardDto } from './create-board.dto';
 
 import { UpdateBoardDto } from './update-board.dto';
 import { BoardColumnsService } from 'src/board-columns/board-columns.service';
+import { CreateBoardColumnDto } from 'src/board-columns/create-board-column.dto';
 
 @Injectable()
 export class BoardsService {
@@ -26,6 +27,16 @@ export class BoardsService {
     return await this.dataSource.manager.save(Board, board);
   }
 
+  public async addColumnToBoard(
+    boardId: string,
+    createBoardColumnDto: CreateBoardColumnDto,
+  ) {
+    return await this.boardColumnsService.addColumnToBoard(
+      boardId,
+      createBoardColumnDto,
+    );
+  }
+
   public async findAll() {
     return await this.dataSource.manager.find(Board);
   }
@@ -38,7 +49,13 @@ export class BoardsService {
     const entityManager = this.ensureEntityManager(em);
     const board = await entityManager.findOne(Board, {
       where: { id },
-      relations: ['columns'],
+      relations: {
+        columns: {
+          tasks: {
+            subtasks: true,
+          },
+        },
+      },
     });
     if (!board) {
       throw new NotFoundException(`Board with id ${id} not found`);
@@ -83,8 +100,7 @@ export class BoardsService {
     board: CreateBoardDto,
     em?: EntityManager,
   ) {
-    const entityManager = em || this.dataSource.manager;
-    await this.validateUniqueBoardName(board.name, entityManager);
+    await this.validateUniqueBoardName(board.name, em);
     if (board.columns)
       this.boardColumnsService.ensureUniqueColumnTitles(board.columns);
   }

@@ -1,12 +1,16 @@
 import { Paragraph } from "@/core/components";
-
-import { NEW_COLUMNS, NO_BOARD_COLUMNS_MESSAGE } from "../constants";
+import {
+  ADD_NEW_COLUMN,
+  NEW_COLUMNS,
+  NO_BOARD_COLUMNS_MESSAGE,
+} from "../constants";
 import { Button } from "@/core/desing-system";
 import { BoardColumn } from "../types";
 import { FC } from "react";
 import { CreateBoardColumnForm } from "./CreateBoardColumnForm";
 import { useAtom } from "jotai";
 import { isBoardColumnCreateFormActiveAtom } from "@/features/board/store/atoms";
+import { BoardColumnListItem } from "./BoardColumnListItem";
 
 type BoardColumnListProps = {
   list: BoardColumn[];
@@ -40,7 +44,7 @@ export const BoardColumnList: FC<BoardColumnListProps> = ({ list }) => {
           fit
           onClick={() => setIsBoardColumnCreateFormActiveAtom(true)}
         >
-          + Add New Column
+          {ADD_NEW_COLUMN}
         </Button>
       </article>
     );
@@ -65,17 +69,9 @@ export const BoardColumnList: FC<BoardColumnListProps> = ({ list }) => {
   }
   return (
     <ul className="bg-light-grey  flex overflow-x-auto hid scrollbar-hide min-h-[80lvh] px-7 pt-4  gap-x-6">
-      {list.map(({ id, title }) => {
-        return (
-          <li key={id} className="shrink-0 grow-0 basis-[17.5rem]">
-            <header className="before:content-[''] before:block before:bg-primary before:rounded-full  flex items-center gap-x-3 before:w-[0.9375rem] before:h-[0.9375rem]">
-              <h4 className="heading-s text-medium-grey uppercase tracking-widest">
-                {title}
-              </h4>
-            </header>
-          </li>
-        );
-      })}
+      {list.map((column) => (
+        <BoardColumnListItem key={column.id} column={column} />
+      ))}
       {lastListElementItem}
     </ul>
   );

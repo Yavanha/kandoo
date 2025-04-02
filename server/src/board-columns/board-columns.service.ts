@@ -1,15 +1,26 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
 import { BoardColumn } from './board-column.entity';
 import { CreateBoardColumnDto } from './create-board-column.dto';
 import { UpdateBoardColumnDto } from './update-board-column.dto';
+import { TasksService } from 'src/tasks/tasks.service';
+import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
 
 @Injectable()
 export class BoardColumnsService {
-  constructor(private dataSource: DataSource) {}
+  constructor(private dataSource: DataSource, private tasksService: TasksService) {}
 
-  createBoardColumn() {
-    console.log('Creating a new board column...');
+
+  async findAll() {
+    return this.dataSource.manager.find(BoardColumn);
+  }
+
+  async findAllTasksByColumnId(columnId: string) {
+    return await this.tasksService.findAllTasksByColumnId(columnId);
+  }
+
+  async findOne(id: string) {
+    return this.dataSource.manager.findOne(BoardColumn, { where: { id } });
   }
 
   async addColumnToBoard(
@@ -57,6 +68,25 @@ export class BoardColumnsService {
     }
     return boardColumns;
   }
+
+  public async addTaskToColumn(
+    columnId: string,
+    createTaskDto: CreateTaskDto,
+  ) {
+    const column =  await this.tryToRetrieveColumnById(columnId);
+    return await this.tasksService.addTaskToColumn(column, createTaskDto);
+  }
+
+  private async tryToRetrieveColumnById(id: string, em?: EntityManager) {
+    const entityManager = this.ensureEntityManager(em);
+    const column = await entityManager.findOne(BoardColumn, { where: { id } });
+    if (!column) {
+      throw new NotFoundException(`Column with id ${id} not found`);
+    }
+    return column;
+  }
+
+
 
   private async removeBoardColumns(
     ids: string[] | undefined,
