@@ -5,11 +5,11 @@ export const transformListFieldsToBoardColumnDelta = (
   activeBoardColumns: BoardColumn[],
   fields: GenricListItemFormType[]
 ) => {
-  if (fields.length === 0) return;
+  if (fields.length === 0) return null;
+  const updatedBoardColumns: UpdateBoardColumn[] = [];
   const activeList = new Map<string, string>(
     activeBoardColumns.map(({ id, title }) => [id, title])
   );
-  const updatedBoardColumns: UpdateBoardColumn[] = [];
 
   fields.forEach(({ itemId, title }) => {
     if (!itemId) {

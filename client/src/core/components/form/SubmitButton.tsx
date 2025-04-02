@@ -34,7 +34,7 @@ export const SubmitButton: FC<SubmitButtonProps> = ({
       >
         {submitContentElt}
       </Button>
-      {errors?.root && errors.root.message && (
+      {errors?.root?.message && (
         <Paragraph severity="danger" text={errors.root.message} />
       )}
     </>
