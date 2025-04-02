@@ -5,7 +5,7 @@ import { BoardSchema } from "../schema";
 import { useEditBoard } from "./useEditBoard";
 import { useBoardMutationOptions } from "./useBoardMutationOptions";
 import { useBoard } from "./useBoard";
-import { BoardColumn } from "@/features/board-column";
+import { BoardColumn, UpdateBoardColumn } from "@/features/board-column";
 import { useAtomValue } from "jotai";
 import { removedFieldsAtom } from "../store/atoms";
 import { transformeToNamedListeFormType } from "@/core/utils";
@@ -48,17 +48,22 @@ export const useEditBoardForm = () => {
     name: nameField,
     list: columnFields,
   }) => {
+    let columns: UpdateBoardColumn[] | null = null;
+    if (isDirtyListField) {
+      columns = transformListFieldsToBoardColumnDelta(
+        activeBoard.columns,
+        columnFields
+      );
+    }
+
     updateBoardMutation.mutate(
       {
         id: activeBoard.id,
         ...(isDirtyName ? { name: nameField } : {}),
         ...(removeColumnIds.length > 0 ? { removeColumnIds } : {}),
-        ...(isDirtyListField
+        ...(columns && columns.length > 0
           ? {
-              columns: transformListFieldsToBoardColumnDelta(
-                activeBoard.columns,
-                columnFields
-              ),
+              columns,
             }
           : {}),
       },

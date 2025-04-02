@@ -83,7 +83,7 @@ export const TaskForm: FC<TaskFormProps> = ({
       <Controller
         control={control}
         name="status"
-        defaultValue={status[0]}
+        defaultValue={status.length > 0 ? status[0] : ""}
         render={({ field }) => (
           <Select
             mode="form"

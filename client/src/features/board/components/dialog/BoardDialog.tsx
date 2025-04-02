@@ -5,7 +5,7 @@ import { Dialog } from "@/core/components";
 import { useBoardFormMap } from "../../hooks";
 
 export const BoardDialog = () => {
-  const [isOpenBoardDialog, setIsOpenBoardDialog] = useAtom(isOpenDialogAtom);
+  const [isOpenDialog, setIsOpenDialog] = useAtom(isOpenDialogAtom);
 
   const boardFormMode = useAtomValue(boardFormModeAtom);
   const { boardFormMap } = useBoardFormMap();
@@ -15,8 +15,8 @@ export const BoardDialog = () => {
   return (
     boardFormInfo && (
       <Dialog
-        isOpen={isOpenBoardDialog}
-        onOpenChange={setIsOpenBoardDialog}
+        isOpen={isOpenDialog}
+        onOpenChange={setIsOpenDialog}
         title={boardFormInfo.dialogTitle}
         isDanger={boardFormMode === "DELETE"}
       >
