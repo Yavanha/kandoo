@@ -1,5 +1,4 @@
-import { Input } from "@/core/desing-system";
-import { Form } from "radix-ui";
+import { Input } from "@/core/design-system";
 import { DetailedHTMLProps, FC } from "react";
 import { FieldError } from "react-hook-form";
 
@@ -19,7 +18,7 @@ export const RemovableField: FC<RemovableFieldProps> = ({
   ...field
 }) => {
   return (
-    <Form.Field name={title} className="mb-3" key={title}>
+    <div className="mb-3" key={title}>
       <div className="flex items-center  gap-x-4">
         <Input placeholder="e.g. Todo" {...field} hasError={!!error} />
         <button type="button" className="cursor-pointer" onClick={remove}>
@@ -27,11 +26,7 @@ export const RemovableField: FC<RemovableFieldProps> = ({
         </button>
       </div>
 
-      {error && (
-        <Form.Message className="text-destructive body-m">
-          {error.message}
-        </Form.Message>
-      )}
-    </Form.Field>
+      {error && <p className="text-destructive body-m pt-1">{error.message}</p>}
+    </div>
   );
 };

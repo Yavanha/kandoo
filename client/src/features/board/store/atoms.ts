@@ -1,26 +1,32 @@
 import { atom } from "jotai";
-import { Board, BoardActionMode } from "../types";
+import { BoardActionMode } from "../types";
 
-export const activeBoardAtom = atom<Board | null>(null);
-export const isOpenBoardDialogAtom = atom<boolean>(false);
+export const isOpenDialogAtom = atom<boolean>(false);
 export const isOpenBoardSelectAtom = atom<boolean>(false);
 export const isOpenBoardDropdownMenuAtom = atom<boolean>(false);
 export const boardFormModeAtom = atom<BoardActionMode>("CREATE");
-
+export const removedFieldsAtom = atom<string[]>([]);
+export const isBoardColumnCreateFormActiveAtom = atom<boolean>(false);
 export const triggerCreateFormDialogAtom = atom(null, (_, set) => {
   set(isOpenBoardSelectAtom, false);
+  set(isBoardColumnCreateFormActiveAtom, false);
   set(boardFormModeAtom, "CREATE");
-  set(isOpenBoardDialogAtom, true);
+  set(isOpenDialogAtom, true);
 });
 
 export const triggerEditFormDialogAtom = atom(null, (_, set) => {
   set(isOpenBoardDropdownMenuAtom, false);
+  set(isBoardColumnCreateFormActiveAtom, false);
   set(boardFormModeAtom, "EDIT");
-  set(isOpenBoardDialogAtom, true);
+  set(removedFieldsAtom, []);
+  set(isOpenDialogAtom, true);
 });
 
 export const triggerDeleteFormDialogAtom = atom(null, (_, set) => {
   set(isOpenBoardDropdownMenuAtom, false);
+  set(isBoardColumnCreateFormActiveAtom, false);
   set(boardFormModeAtom, "DELETE");
-  set(isOpenBoardDialogAtom, true);
+  set(isOpenDialogAtom, true);
 });
+
+export const boardIdAtom = atom<string | null>(null);

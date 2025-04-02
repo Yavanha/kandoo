@@ -1,57 +1,70 @@
 import { SubmitHandler, useForm, UseFormProps } from "react-hook-form";
-import { Board, BoardFormType, UpdateBoardType } from "../types";
+import { BoardFormType, UpdateBoardType } from "../types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BoardSchema } from "../schema";
-import { useAtomValue } from "jotai";
-import { activeBoardAtom } from "../store/atoms";
 import { useEditBoard } from "./useEditBoard";
-import { useMutationOptions } from "./useMutateOptions";
+import { useBoardMutationOptions } from "./useBoardMutationOptions";
+import { useBoard } from "./useBoard";
+import { BoardColumn } from "@/features/board-column";
+import { useAtomValue } from "jotai";
+import { removedFieldsAtom } from "../store/atoms";
+import { transformeToNamedListeFormType } from "@/core/utils";
+import { transformListFieldsToBoardColumnDelta } from "../utils";
+import { BoardNotFoundException } from "@/features/board/exceptions";
 
 export const useEditBoardForm = () => {
   const { updateBoardMutation } = useEditBoard();
-  const activeBoard = useAtomValue(activeBoardAtom) as Board;
+  const activeBoard = useBoard();
+  if (!activeBoard) {
+    throw new BoardNotFoundException();
+  }
+  const removeColumnIds = useAtomValue(removedFieldsAtom);
+  const defaultValues = transformeToNamedListeFormType<BoardColumn[]>(
+    activeBoard.columns,
+    activeBoard.name
+  );
 
   const formProps: UseFormProps<BoardFormType> = {
-    defaultValues: {
-      name: activeBoard?.name,
-      list: activeBoard?.columns.map(({ id: colId, title }) => ({
-        colId,
-        title,
-      })),
-    },
+    defaultValues,
     resolver: zodResolver(BoardSchema),
     shouldFocusError: true,
   };
   const form = useForm<BoardFormType>(formProps);
+
   const {
     reset,
     setError,
-    formState: { dirtyFields },
+    formState: {
+      dirtyFields: { list: isDirtyListField, name: isDirtyName },
+    },
   } = form;
-  const options = useMutationOptions<UpdateBoardType, BoardFormType>(
+  const options = useBoardMutationOptions<UpdateBoardType, BoardFormType>(
     reset,
     setError,
-    {
-      name: activeBoard.name,
-      list: activeBoard.columns.map((item) => ({
-        colId: item.id,
-        title: item.title,
-      })),
-    }
+    defaultValues
   );
-  const onSubmit: SubmitHandler<BoardFormType> = ({ name, list }) => {
+
+  const onSubmit: SubmitHandler<BoardFormType> = ({
+    name: nameField,
+    list: columnFields,
+  }) => {
     updateBoardMutation.mutate(
       {
         id: activeBoard.id,
-        ...(dirtyFields.list && dirtyFields.list
-          ? { columns: list.map(({ colId: id, title }) => ({ id, title })) }
+        ...(isDirtyName ? { name: nameField } : {}),
+        ...(removeColumnIds.length > 0 ? { removeColumnIds } : {}),
+        ...(isDirtyListField
+          ? {
+              columns: transformListFieldsToBoardColumnDelta(
+                activeBoard.columns,
+                columnFields
+              ),
+            }
           : {}),
-        ...(dirtyFields.name ? { name } : {}),
       },
       options
     );
   };
-
   return {
     onSubmit,
     form,

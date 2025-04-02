@@ -1,42 +1,45 @@
-import { FC, useMemo } from "react";
+import { FC } from "react";
 import { Board } from "../types";
-import { Select } from "@/core/desing-system";
+import { Select } from "@/core/design-system";
 import { useAtom, useSetAtom } from "jotai";
-import { useHydrateAtoms } from "jotai/utils";
 import {
-  activeBoardAtom,
   isOpenBoardSelectAtom,
   triggerCreateFormDialogAtom,
 } from "../store/atoms";
 import { ThemeSwitch, DialogTrigger } from "@/core/components";
+import { useNavigate } from "@tanstack/react-router";
+import { useBoard } from "../hooks";
 type SelectBoardProps = {
   boards: Board[];
 };
 
 export const BoardSelect: FC<SelectBoardProps> = ({ boards }) => {
-  const [activeBoard, setActiveBoard] = useAtom(activeBoardAtom);
+  const navigate = useNavigate();
   const triggerCreateFormDialog = useSetAtom(triggerCreateFormDialogAtom);
   const [isOpenBoardSelect, setIsOpenBoardSelect] = useAtom(
     isOpenBoardSelectAtom
   );
-  useHydrateAtoms([[activeBoardAtom, boards[0]]]);
-
-  const boardNames = useMemo(() => boards.map(({ name }) => name), [boards]);
-
-  const selecteValudChangeHandler = (value: string) => {
+  const boardNames = boards.map(({ name }) => name);
+  const activeBoard = useBoard();
+  const selecteValueChangeHandler = (value: string) => {
     const selectedBoard = boards.find((board) => board.name === value);
     if (selectedBoard) {
-      setActiveBoard(selectedBoard);
+      navigate({
+        to: "/boards/$id",
+        params: {
+          id: selectedBoard.id,
+        },
+      });
       setIsOpenBoardSelect(false);
     }
   };
 
   return (
     <Select
-      value={activeBoard ? activeBoard.name : undefined}
+      value={activeBoard?.name || ""}
       values={boardNames}
       placeholder="Select a board"
-      onValueChange={selecteValudChangeHandler}
+      onValueChange={selecteValueChangeHandler}
       isOpen={isOpenBoardSelect}
       onOpenChange={setIsOpenBoardSelect}
     >

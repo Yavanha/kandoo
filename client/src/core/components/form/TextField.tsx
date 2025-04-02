@@ -1,5 +1,4 @@
-import { Input } from "@/core/desing-system";
-import { Form } from "radix-ui";
+import { Input } from "@/core/design-system";
 import {
   FieldError,
   InternalFieldName,
@@ -7,6 +6,7 @@ import {
 } from "react-hook-form";
 
 type TextFieldProps<T extends InternalFieldName> = {
+  id: string;
   placeholder: string;
   field: T extends InternalFieldName ? UseFormRegisterReturn<T> : never;
   error?: FieldError;
@@ -16,17 +16,12 @@ export const TextField = <T extends InternalFieldName>({
   placeholder,
   field,
   error,
+  id,
 }: TextFieldProps<T>) => {
   return (
-    <Form.Field name="" className="mb-6">
-      <Form.Control asChild>
-        <Input placeholder={placeholder} {...field} hasError={!!error} />
-      </Form.Control>
-      {error && (
-        <Form.Message className="text-destructive body-m">
-          {error.message}
-        </Form.Message>
-      )}
-    </Form.Field>
+    <div className="mb-6">
+      <Input id={id} placeholder={placeholder} {...field} hasError={!!error} />
+      {error && <p className="text-destructive body-m pt-1">{error.message}</p>}
+    </div>
   );
 };

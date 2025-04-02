@@ -1,12 +1,14 @@
-import { Button } from "@/core/desing-system";
+import { Button } from "@/core/design-system";
 import { CircleIcon } from "@radix-ui/react-icons";
 import { FC } from "react";
 import { FieldValues, FormState } from "react-hook-form";
 import { Paragraph } from "../Typography/Paragraph";
 
-type SubmitButtonProps = Pick<
-  FormState<FieldValues>,
-  "isValid" | "isDirty" | "isSubmitting" | "errors"
+type SubmitButtonProps = Partial<
+  Pick<
+    FormState<FieldValues>,
+    "isValid" | "isDirty" | "isSubmitting" | "errors"
+  >
 > & { label: string };
 
 export const SubmitButton: FC<SubmitButtonProps> = ({
@@ -32,7 +34,7 @@ export const SubmitButton: FC<SubmitButtonProps> = ({
       >
         {submitContentElt}
       </Button>
-      {errors.root && errors.root.message && (
+      {errors?.root && errors.root.message && (
         <Paragraph severity="danger" text={errors.root.message} />
       )}
     </>

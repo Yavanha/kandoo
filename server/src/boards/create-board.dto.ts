@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  ArrayUnique,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -17,5 +18,6 @@ export class CreateBoardDto {
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => CreateBoardColumnDto)
+  @ArrayUnique((o: CreateBoardColumnDto) => o.title)
   columns?: CreateBoardColumnDto[];
 }

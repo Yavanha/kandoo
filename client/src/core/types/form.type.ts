@@ -1,5 +1,12 @@
-import { z } from "@kandoo/shared";
-import { FormSchema, ItemSchema } from "../schema";
+export type GenricListItemFormType = {
+  itemId?: string;
+  title: string;
+};
 
-export type ItempType = z.infer<typeof ItemSchema>;
-export type GenericFormType = z.infer<typeof FormSchema>;
+export type GenericListFormType = {
+  list: GenricListItemFormType[];
+};
+
+export type NamedListFormType = {
+  name: string;
+} & GenericListFormType;

@@ -5,5 +5,5 @@ import { IsOptional, IsUUID } from 'class-validator';
 export class UpdateBoardColumnDto extends PartialType(CreateBoardColumnDto) {
   @IsUUID()
   @IsOptional()
-  id: string;
+  id?: string;
 }

@@ -6,15 +6,14 @@ import {
   Patch,
   Param,
   Delete,
-  NotFoundException,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './create-board.dto';
-import { UpdateBoardDto } from './update-board.dto';
 import { FindOneParam } from 'src/common/params/find-one.param';
-
+import { UpdateBoardDto } from './update-board.dto';
+import { CreateBoardColumnDto } from 'src/board-columns/create-board-column.dto';
 @Controller('api/boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
@@ -24,6 +23,14 @@ export class BoardsController {
     return await this.boardsService.create(createBoardDto);
   }
 
+  @Post(':id/columns')
+  async addColumnToBoard(
+    @Param() { id }: FindOneParam,
+    @Body() createBoardColumnDto: CreateBoardColumnDto,
+  ) {
+    return await this.boardsService.addColumnToBoard(id, createBoardColumnDto);
+  }
+
   @Get()
   async findAll() {
     return await this.boardsService.findAll();
@@ -31,7 +38,7 @@ export class BoardsController {
 
   @Get(':id')
   async findOne(@Param() { id }: FindOneParam) {
-    return await this.tryToRetrieveBoard(id);
+    return await this.boardsService.findOne(id);
   }
 
   @Patch(':id')
@@ -39,22 +46,12 @@ export class BoardsController {
     @Param() { id }: FindOneParam,
     @Body() updateBoardDto: UpdateBoardDto,
   ) {
-    const board = await this.tryToRetrieveBoard(id);
-    return this.boardsService.update(board, updateBoardDto);
+    return this.boardsService.update(id, updateBoardDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param() { id }: FindOneParam) {
-    await this.tryToRetrieveBoard(id);
     await this.boardsService.remove(id);
-  }
-
-  private async tryToRetrieveBoard(id: string) {
-    const board = await this.boardsService.findOne(id);
-    if (!board) {
-      throw new NotFoundException(`Board with id ${id} not found`);
-    }
-    return board;
   }
 }

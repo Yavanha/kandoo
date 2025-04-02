@@ -11,10 +11,19 @@
 // Import Routes
 
 import { Route as rootRoute } from './core/routes/__root'
+import { Route as BoardsRouteImport } from './core/routes/boards/route'
 import { Route as IndexImport } from './core/routes/index'
-import { Route as BoardsIndexImport } from './core/routes/boards/index'
+import { Route as BoardsIdImport } from './core/routes/boards/$id'
 
 // Create/Update Routes
+
+const BoardsRouteRoute = BoardsRouteImport.update({
+  id: '/boards',
+  path: '/boards',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./core/routes/boards/route.lazy').then((d) => d.Route),
+)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -22,12 +31,12 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const BoardsIndexRoute = BoardsIndexImport.update({
-  id: '/boards/',
-  path: '/boards/',
-  getParentRoute: () => rootRoute,
+const BoardsIdRoute = BoardsIdImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => BoardsRouteRoute,
 } as any).lazy(() =>
-  import('./core/routes/boards/index.lazy').then((d) => d.Route),
+  import('./core/routes/boards/$id.lazy').then((d) => d.Route),
 )
 
 // Populate the FileRoutesByPath interface
@@ -41,51 +50,73 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/boards/': {
-      id: '/boards/'
+    '/boards': {
+      id: '/boards'
       path: '/boards'
       fullPath: '/boards'
-      preLoaderRoute: typeof BoardsIndexImport
+      preLoaderRoute: typeof BoardsRouteImport
       parentRoute: typeof rootRoute
+    }
+    '/boards/$id': {
+      id: '/boards/$id'
+      path: '/$id'
+      fullPath: '/boards/$id'
+      preLoaderRoute: typeof BoardsIdImport
+      parentRoute: typeof BoardsRouteImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface BoardsRouteRouteChildren {
+  BoardsIdRoute: typeof BoardsIdRoute
+}
+
+const BoardsRouteRouteChildren: BoardsRouteRouteChildren = {
+  BoardsIdRoute: BoardsIdRoute,
+}
+
+const BoardsRouteRouteWithChildren = BoardsRouteRoute._addFileChildren(
+  BoardsRouteRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/boards': typeof BoardsIndexRoute
+  '/boards': typeof BoardsRouteRouteWithChildren
+  '/boards/$id': typeof BoardsIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/boards': typeof BoardsIndexRoute
+  '/boards': typeof BoardsRouteRouteWithChildren
+  '/boards/$id': typeof BoardsIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/boards/': typeof BoardsIndexRoute
+  '/boards': typeof BoardsRouteRouteWithChildren
+  '/boards/$id': typeof BoardsIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/boards'
+  fullPaths: '/' | '/boards' | '/boards/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/boards'
-  id: '__root__' | '/' | '/boards/'
+  to: '/' | '/boards' | '/boards/$id'
+  id: '__root__' | '/' | '/boards' | '/boards/$id'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  BoardsIndexRoute: typeof BoardsIndexRoute
+  BoardsRouteRoute: typeof BoardsRouteRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  BoardsIndexRoute: BoardsIndexRoute,
+  BoardsRouteRoute: BoardsRouteRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -99,14 +130,21 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/boards/"
+        "/boards"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/boards/": {
-      "filePath": "boards/index.tsx"
+    "/boards": {
+      "filePath": "boards/route.tsx",
+      "children": [
+        "/boards/$id"
+      ]
+    },
+    "/boards/$id": {
+      "filePath": "boards/$id.tsx",
+      "parent": "/boards"
     }
   }
 }

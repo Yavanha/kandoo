@@ -2,34 +2,44 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Board, DeleteBoardType } from "../types";
 import { remove } from "@/core/api";
 import { GET_BOARDS_CACHE_KEY } from "../constants/constants";
-import { AxioResponsError } from "@/core/types";
+import { AxiosResponseError } from "@/core/types";
 import { AxiosError } from "axios";
+import { useNavigate } from "@tanstack/react-router";
+import { boardIdAtom } from "../store/atoms";
 import { useSetAtom } from "jotai";
-import { activeBoardAtom } from "../store/atoms";
 
 export const useDeleteBoard = () => {
   const queryClient = useQueryClient();
-  const setActiveBoard = useSetAtom(activeBoardAtom);
-
+  const setBoardIdAtom = useSetAtom(boardIdAtom);
+  const navigate = useNavigate();
   const mutation = useMutation<
     Board,
-    AxiosError<AxioResponsError>,
+    AxiosError<AxiosResponseError>,
     DeleteBoardType,
     unknown
   >({
     mutationFn: async (data: DeleteBoardType) => {
-      console.log(data.id);
       return await remove<Board>(`/boards/${data.id}`);
     },
     onSuccess: (_, { id: deletedId }) => {
-      queryClient.invalidateQueries({ queryKey: [GET_BOARDS_CACHE_KEY] });
+      queryClient.invalidateQueries({
+        queryKey: [GET_BOARDS_CACHE_KEY],
+      });
       const boards = queryClient
         .getQueryData<Board[]>([GET_BOARDS_CACHE_KEY])
         ?.filter((board) => board.id !== deletedId);
       if (boards && boards.length) {
-        setActiveBoard(boards[0]);
+        navigate({
+          to: "/boards/$id",
+          params: {
+            id: boards[0].id,
+          },
+        });
       } else {
-        setActiveBoard(null);
+        setBoardIdAtom(null);
+        navigate({
+          from: "/boards",
+        });
       }
     },
   });
