@@ -1,15 +1,19 @@
 import { SubmitHandler, useForm, UseFormProps } from "react-hook-form";
-import { Board, DeleteBoardType } from "../types";
+import { DeleteBoardType } from "../types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DeleteBoardShema } from "../schema";
 
-import { useMutationOptions } from "./useMutateOptions";
+import { useBoardMutationOptions } from "./useBoardMutationOptions";
 import { useDeleteBoard } from "./useDeleteBoard";
 import { useBoard } from "./useBoard";
+import { BoardNotFoundException } from "../exceptions";
 
 export const useDeleteBoardForm = () => {
   const { deleteBoardMutation } = useDeleteBoard();
-  const activeBoard = useBoard() as Board;
+  const activeBoard = useBoard();
+  if (!activeBoard) {
+    throw new BoardNotFoundException();
+  }
 
   const formProps: UseFormProps<DeleteBoardType> = {
     defaultValues: {
@@ -20,7 +24,7 @@ export const useDeleteBoardForm = () => {
   };
   const form = useForm<DeleteBoardType>(formProps);
   const { setError } = form;
-  const options = useMutationOptions<DeleteBoardType, DeleteBoardType>(
+  const options = useBoardMutationOptions<DeleteBoardType, DeleteBoardType>(
     null,
     setError
   );

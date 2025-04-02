@@ -3,7 +3,7 @@ import { BoardFormType, CreateBoardType } from "../types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BoardSchema } from "../schema";
 import { useCreateBoard } from "./useCreateBoard";
-import { useMutationOptions } from "./useMutateOptions";
+import { useBoardMutationOptions } from "./useBoardMutationOptions";
 
 export const useCreateBoardForm = () => {
   const { createBoardMutation } = useCreateBoard();
@@ -18,7 +18,7 @@ export const useCreateBoardForm = () => {
   };
   const form = useForm<BoardFormType>(formProps);
   const { reset, setError } = form;
-  const options = useMutationOptions<CreateBoardType, BoardFormType>(
+  const options = useBoardMutationOptions<CreateBoardType, BoardFormType>(
     reset,
     setError,
     defaultValues

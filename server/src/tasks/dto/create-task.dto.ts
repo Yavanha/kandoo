@@ -12,11 +12,11 @@ import { CreateSubtaskDto } from 'src/subtasks/create-subtask.dto';
 export class CreateTaskDto {
   @IsString()
   @IsNotEmpty()
-  @MaxLength(50)
+  @MaxLength(20)
   title: string;
 
   @IsString()
-  @MaxLength(500)
+  @MaxLength(200)
   description: string;
 
   @IsString()

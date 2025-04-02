@@ -1,4 +1,4 @@
-import { Button, Label } from "@/core/desing-system";
+import { Button, Label } from "@/core/design-system";
 import {
   Control,
   FieldErrors,

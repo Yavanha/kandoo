@@ -1,4 +1,4 @@
-import { Button } from "@/core/desing-system";
+import { Button } from "@/core/design-system";
 import { CircleIcon } from "@radix-ui/react-icons";
 import { FC } from "react";
 import { FieldValues, FormState } from "react-hook-form";

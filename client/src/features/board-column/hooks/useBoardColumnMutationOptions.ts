@@ -6,7 +6,7 @@ import { BoardColumn } from "../types";
 import { isBoardColumnCreateFormActiveAtom } from "@/features/board/store/atoms";
 import { useSetAtom } from "jotai";
 
-export const useMutationOptions = <D extends FieldValues>(
+export const useBoardColumnMutationOptions = <D extends FieldValues>(
   reset: UseFormReset<D> | null,
   setError: UseFormSetError<D>,
   resetValues?: D

@@ -31,7 +31,7 @@ export const MainHeader = () => {
   return (
     <Toolbar className="sticky top-0 left-0 flex items-center bg-white px-4 py-5 justify-between">
       <div className="flex items-center gap-4">
-        <Button role="menu">
+        <Button>
           <img src="/icons/logo-mobile.svg" alt="menu" />
         </Button>
         {selectOrDialogTrigger}
@@ -42,7 +42,7 @@ export const MainHeader = () => {
             openBoardDialog={triggerCreateTaskFormDialog}
             disabled={!hasColumns}
           >
-            <div className="bg-primary py-2.5 px-5  rounded-full disabled:bg-primary-hover">
+            <div className="bg-primary py-2.5 px-5  rounded-full ">
               <img src="/icons/icon-add-task-mobile.svg" alt="add task" />
             </div>
           </DialogTrigger>

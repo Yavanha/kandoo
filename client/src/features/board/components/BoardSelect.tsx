@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Board } from "../types";
-import { Select } from "@/core/desing-system";
+import { Select } from "@/core/design-system";
 import { useAtom, useSetAtom } from "jotai";
 import {
   isOpenBoardSelectAtom,
@@ -36,7 +36,7 @@ export const BoardSelect: FC<SelectBoardProps> = ({ boards }) => {
 
   return (
     <Select
-      value={activeBoard?.name}
+      value={activeBoard?.name || ""}
       values={boardNames}
       placeholder="Select a board"
       onValueChange={selecteValueChangeHandler}

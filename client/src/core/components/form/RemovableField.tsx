@@ -1,4 +1,4 @@
-import { Input } from "@/core/desing-system";
+import { Input } from "@/core/design-system";
 import { DetailedHTMLProps, FC } from "react";
 import { FieldError } from "react-hook-form";
 

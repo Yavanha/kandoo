@@ -2,13 +2,14 @@ import { useCreateBoardColumnForm } from "../hooks/useCreateBoardColumnForm";
 import { Form } from "@radix-ui/react-form";
 
 import { SubmitButton } from "@/core/components";
-import { InfoCircledIcon } from "@radix-ui/react-icons";
+
 import { ADD_NEW_COLUMN } from "../constants";
-import { Button, Input } from "@/core/desing-system";
+import { Button, Input } from "@/core/design-system";
 import { CANCEL_LABEL_BUTTON } from "@/core/constants";
 import classNames from "classnames";
 import { useSetAtom } from "jotai";
 import { isBoardColumnCreateFormActiveAtom } from "@/features/board/store/atoms";
+import { StatusIcon } from "@/core/components/status-icons/StatusIcon";
 
 export const CreateBoardColumnForm = () => {
   const { form, onSubmit } = useCreateBoardColumnForm();
@@ -27,7 +28,7 @@ export const CreateBoardColumnForm = () => {
   }
   return (
     <Form
-      className="min-h-[85lvh] bg-light-grey min-w-[17.5rem]   flex flex-col justify-between"
+      className="min-h-[85lvh]   flex flex-col justify-between"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="mb-6">
@@ -37,9 +38,7 @@ export const CreateBoardColumnForm = () => {
               !errorMessage,
           })}
         >
-          {errorMessage && (
-            <InfoCircledIcon className="stroke-destructive w-[0.9375rem] h-[0.9375rem]" />
-          )}
+          {errorMessage && <StatusIcon mode="error" />}
           <Input
             placeholder="e.g. To do"
             {...register("title", {
@@ -52,7 +51,7 @@ export const CreateBoardColumnForm = () => {
           <p className="text-destructive body-m p-2 ps-5">{errorMessage}</p>
         )}
       </div>
-      <div className="flex gap-x-4">
+      <div className="flex flex-col gap-y-2 ">
         <SubmitButton
           isValid={isValid}
           isSubmitting={isSubmitting}

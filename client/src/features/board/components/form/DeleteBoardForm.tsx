@@ -4,7 +4,7 @@ import {
   DELETE_BOARD_FORM_SUBMIT,
   DELETE_BOARD_MESSAGE,
 } from "../../constants/constants";
-import { Button } from "@/core/desing-system";
+import { Button } from "@/core/design-system";
 import { useDeleteBoardForm } from "../../hooks";
 import { useSetAtom } from "jotai";
 import { isOpenDialogAtom } from "../../store/atoms";

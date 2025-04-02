@@ -3,7 +3,7 @@ import { Form } from "@radix-ui/react-form";
 import { SubmitHandler, UseFormReturn } from "react-hook-form";
 import { BoardFormType } from "../../types";
 import { FC } from "react";
-import { Label } from "@/core/desing-system";
+import { Label } from "@/core/design-system";
 import {
   BOARD_ADD_NEW_COLUMN_LABEL,
   BOARD_COLUMN_LABEL,

@@ -4,7 +4,7 @@ import {
   NEW_COLUMNS,
   NO_BOARD_COLUMNS_MESSAGE,
 } from "../constants";
-import { Button } from "@/core/desing-system";
+import { Button } from "@/core/design-system";
 import { BoardColumn } from "../types";
 import { FC } from "react";
 import { CreateBoardColumnForm } from "./CreateBoardColumnForm";
@@ -62,7 +62,7 @@ export const BoardColumnList: FC<BoardColumnListProps> = ({ list }) => {
   );
   if (isBoardColumnCreateFormActive) {
     lastListElementItem = (
-      <li>
+      <li className="shrink-0 grow-0 basis-[17.5rem] ">
         <CreateBoardColumnForm />
       </li>
     );

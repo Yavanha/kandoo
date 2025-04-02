@@ -2,7 +2,7 @@ import { SubmitHandler, useForm, UseFormProps } from "react-hook-form";
 import { TaskFormType, CreateTaskMutationDataType } from "../types/task.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateTask } from "./useCreateTask";
-import { useMutationOptions } from "./useMutateOptions";
+import { useTaskMutationOptions } from "./useTaskMutationOptions";
 import { TaskFormSchema } from "../schemas";
 import { useBoard } from "@/features/board/hooks";
 
@@ -22,11 +22,10 @@ export const useCreateTaskForm = () => {
   };
   const form = useForm<TaskFormType>(formProps);
   const { reset, setError } = form;
-  const options = useMutationOptions<CreateTaskMutationDataType, TaskFormType>(
-    reset,
-    setError,
-    defaultValues
-  );
+  const options = useTaskMutationOptions<
+    CreateTaskMutationDataType,
+    TaskFormType
+  >(reset, setError, defaultValues);
   const onSubmit: SubmitHandler<TaskFormType> = ({
     title,
     description,

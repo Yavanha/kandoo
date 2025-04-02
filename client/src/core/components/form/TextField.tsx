@@ -1,4 +1,4 @@
-import { Input } from "@/core/desing-system";
+import { Input } from "@/core/design-system";
 import {
   FieldError,
   InternalFieldName,

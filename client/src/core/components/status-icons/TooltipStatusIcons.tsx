@@ -6,8 +6,8 @@ import {
   Content,
   Provider,
 } from "@radix-ui/react-tooltip";
-import { InfoCircledIcon } from "@radix-ui/react-icons";
 import classNames from "classnames";
+import { StatusIcon } from "./StatusIcon";
 
 type TooltipStatusIconsProps = {
   mode: "info" | "warning" | "error" | "success";
@@ -27,11 +27,7 @@ export const TooltipStatusIcons: FC<TooltipStatusIconsProps> = ({
             className="cursor-pointer"
             onClick={() => setTooltipOpen((prev) => !prev)}
           >
-            <InfoCircledIcon
-              className={classNames("w-[20px] h-[20px]", {
-                "stroke-destructive": mode === "error",
-              })}
-            />
+            <StatusIcon mode={mode} />
           </button>
         </Trigger>
         <Portal>

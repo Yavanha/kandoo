@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
 import { BoardColumn } from './board-column.entity';
 import { CreateBoardColumnDto } from './create-board-column.dto';
@@ -8,8 +12,10 @@ import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
 
 @Injectable()
 export class BoardColumnsService {
-  constructor(private dataSource: DataSource, private tasksService: TasksService) {}
-
+  constructor(
+    private dataSource: DataSource,
+    private tasksService: TasksService,
+  ) {}
 
   async findAll() {
     return this.dataSource.manager.find(BoardColumn);
@@ -69,11 +75,8 @@ export class BoardColumnsService {
     return boardColumns;
   }
 
-  public async addTaskToColumn(
-    columnId: string,
-    createTaskDto: CreateTaskDto,
-  ) {
-    const column =  await this.tryToRetrieveColumnById(columnId);
+  public async addTaskToColumn(columnId: string, createTaskDto: CreateTaskDto) {
+    const column = await this.tryToRetrieveColumnById(columnId);
     return await this.tasksService.addTaskToColumn(column, createTaskDto);
   }
 
@@ -85,8 +88,6 @@ export class BoardColumnsService {
     }
     return column;
   }
-
-
 
   private async removeBoardColumns(
     ids: string[] | undefined,
@@ -143,7 +144,7 @@ export class BoardColumnsService {
     const { id, title } = data;
     if (id) {
       const column = boardColumnsMap.get(id);
-      if (column) {
+      if (column && title) {
         column.title = title;
       }
     }

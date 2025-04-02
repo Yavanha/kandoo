@@ -1,4 +1,4 @@
-import { TextArea } from "@/core/desing-system/";
+import { TextArea } from "@/core/design-system";
 import {
   FieldError,
   InternalFieldName,

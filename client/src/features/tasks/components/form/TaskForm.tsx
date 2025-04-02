@@ -19,7 +19,7 @@ import {
   TASK_TITLE_PLACEHOLDER,
   TASK_STATUS_PLACEHOLDER,
 } from "../../constants";
-import { Label, Select } from "@/core/desing-system";
+import { Label, Select } from "@/core/design-system";
 
 type TaskFormProps = {
   submitLabel: string;

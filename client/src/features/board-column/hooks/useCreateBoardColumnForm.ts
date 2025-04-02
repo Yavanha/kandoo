@@ -3,7 +3,7 @@ import { useCreateBoardColumn } from "./useCreateBoardColumn";
 import { BoardColumnSchema } from "../schema";
 import { SubmitHandler, useForm, UseFormProps } from "react-hook-form";
 import { CreateBoardColumn } from "../types";
-import { useMutationOptions } from "./useMutateOptions";
+import { useBoardColumnMutationOptions } from "./useBoardColumnMutationOptions";
 import { useBoard } from "@/features/board/hooks";
 import { Board } from "@/features/board/types";
 
@@ -22,7 +22,7 @@ export const useCreateBoardColumnForm = () => {
 
   const form = useForm<CreateBoardColumn>(formProps);
   const { reset, setError } = form;
-  const options = useMutationOptions<CreateBoardColumn>(
+  const options = useBoardColumnMutationOptions<CreateBoardColumn>(
     reset,
     setError,
     defaultValues
