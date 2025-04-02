@@ -6,12 +6,16 @@ type DialogTriggerProps = React.DetailedHTMLProps<
   HTMLButtonElement
 > & {
   hasFlushEdges?: boolean;
-  openBoardDialog: () => void;
+  openDialog: () => void;
 } & PropsWithChildren;
 
 export const DialogTrigger: FC<DialogTriggerProps> = forwardRef(
   (props, ref) => {
-    const { hasFlushEdges = false, children, openBoardDialog } = props;
+    const {
+      hasFlushEdges = false,
+      children,
+      openDialog: openBoardDialog,
+    } = props;
     return (
       <button
         ref={ref}

@@ -1,10 +1,7 @@
-import { CreateSubTask } from "@/features/subtask/types/subtask.type";
+import { CreateSubTask, Subtask } from "@/features/subtask/types";
 import { TaskFormSchema } from "../schemas";
 import { z } from "@kandoo/shared";
-export interface Subtask {
-  title: string;
-  isCompleted: boolean;
-}
+
 export interface Status {
   id: string;
   value: string;

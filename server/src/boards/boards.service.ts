@@ -42,7 +42,7 @@ export class BoardsService {
   }
 
   public async findOne(id: string) {
-    return this.tryToRetrieveBoardById(id, this.dataSource.manager);
+    return this.tryToRetrieveBoardById(id);
   }
 
   public async tryToRetrieveBoardById(id: string, em?: EntityManager) {
@@ -82,9 +82,9 @@ export class BoardsService {
       }
 
       board.columns = await this.boardColumnsService.update(
+        boardId,
         removeColumnIds,
         updateBoardColumns,
-        boardId,
         manager,
       );
 

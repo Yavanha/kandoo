@@ -10,20 +10,26 @@ import { useBoard } from "./useBoard";
 import { DeleteBoardForm } from "../components/form/DeleteBoardForm";
 import { CreateTaskForm } from "@/features/tasks/components/form/CreateTaskForm";
 import { CREATE_TASK_DIALOG_TITLE } from "@/features/tasks/constants";
+import { TaskDetailsCard } from "@/features/tasks/components/TaskDetailsCard";
+import { useAtomValue } from "jotai";
+import { activeTaskAtom } from "@/features/tasks/store";
 
 export const useBoardFormMap = () => {
   const activeBoard = useBoard();
+  const activeTask = useAtomValue(activeTaskAtom);
   const boardFormMap = useMemo(
     () =>
-      new Map<BoardActionMode, { element: ReactElement; dialogTitle: string }>([
+      new Map<BoardActionMode, { element: ReactElement; dialogTitle?: string }>(
         [
-          "CREATE",
-          {
-            element: <CreateBoardForm />,
-            dialogTitle: CREATE_BOARD_DIALOG_TITLE,
-          },
-        ],
-      ]),
+          [
+            "CREATE",
+            {
+              element: <CreateBoardForm />,
+              dialogTitle: CREATE_BOARD_DIALOG_TITLE,
+            },
+          ],
+        ]
+      ),
     []
   );
 
@@ -44,6 +50,15 @@ export const useBoardFormMap = () => {
       ),
       dialogTitle: CREATE_TASK_DIALOG_TITLE,
     });
+    if (activeTask)
+      boardFormMap.set("TASK-DETAILS", {
+        element: (
+          <TaskDetailsCard
+            data={activeTask}
+            status={activeBoard.columns.map(({ title }) => title)}
+          />
+        ),
+      });
   } else {
     boardFormMap.delete("EDIT");
     boardFormMap.delete("DELETE");

@@ -36,14 +36,14 @@ export const BoardDropdownMenu = () => {
           align="end"
         >
           <Item asChild>
-            <DialogTrigger openBoardDialog={triggerEditFormDialog}>
+            <DialogTrigger openDialog={triggerEditFormDialog}>
               <p className="text-medium-grey body-l mb-4 cursor-pointer">
                 Edit New Board
               </p>
             </DialogTrigger>
           </Item>
           <Item>
-            <DialogTrigger openBoardDialog={triggerDeleteFormDialog}>
+            <DialogTrigger openDialog={triggerDeleteFormDialog}>
               <p className="text-destructive body-l cursor-pointer">
                 Delete Board
               </p>

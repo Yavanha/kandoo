@@ -17,7 +17,7 @@ export const MainHeader = () => {
   );
 
   let selectOrDialogTrigger = (
-    <DialogTrigger openBoardDialog={triggerCreateFormDialog}>
+    <DialogTrigger openDialog={triggerCreateFormDialog}>
       <p className="capitalize heading-m flex items-center gap-x-0.5 text-primary">
         <span className="inline-block align-middle">+</span> Create New Board
       </p>
@@ -39,7 +39,7 @@ export const MainHeader = () => {
       {activeBoard && (
         <div className="flex items-center gap-x-4">
           <DialogTrigger
-            openBoardDialog={triggerCreateTaskFormDialog}
+            openDialog={triggerCreateTaskFormDialog}
             disabled={!hasColumns}
           >
             <div className="bg-primary py-2.5 px-5  rounded-full ">

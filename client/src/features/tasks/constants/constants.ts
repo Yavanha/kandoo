@@ -13,7 +13,11 @@ export const TASK_DESCRIPTION_PLACEHOLDER = `e.g. It’s always good to take a b
 a little.`;
 export const TASK_STATUS_PLACEHOLDER = "Status";
 export const CREATE_TASK_DIALOG_TITLE = "Add New Task";
+export const CURRENT_STATUS_LABEL = "Current Status";
 
 //QUERY KEYS
 
 export const GET_TASKS_QUERY_KEY_BY_BOARD_COLUMN_ID = "tasks";
+
+// DETAILS
+export const TASK_DETAILS_SELECT_ID = "task-details-select";

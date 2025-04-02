@@ -5,7 +5,6 @@ import {
   Param,
 } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
 import { DataSource, EntityManager } from 'typeorm';
 import { Task } from './entities/task.entity';
 import { FindOneParam } from 'src/common/params/find-one.param';
@@ -42,18 +41,23 @@ export class TasksService {
     await this.datasource.manager.delete(Task, id);
   }
 
-  private async confirmTaskIntegrity(task: CreateTaskDto, column: BoardColumn, em?: EntityManager) {
+  private async confirmTaskIntegrity(
+    task: CreateTaskDto,
+    column: BoardColumn,
+    em?: EntityManager,
+  ) {
     await this.validateUniqueTaskTitle(task.title, em);
     this.validateTaskStatus(task, column);
     if (task.subtasks) {
-      this.subtasksService.ensureUniqueSubtaskTitle(task.subtasks, em);
+      this.subtasksService.ensureUniqueSubtaskTitle(task.subtasks);
     }
   }
 
-  private validateTaskStatus(task : CreateTaskDto , column : BoardColumn) {
-
+  private validateTaskStatus(task: CreateTaskDto, column: BoardColumn) {
     if (task.status !== column.title) {
-      throw new ConflictException(`Task status ${task.status} does not match column title ${column.title}`);
+      throw new ConflictException(
+        `Task status ${task.status} does not match column title ${column.title}`,
+      );
     }
   }
 
@@ -61,7 +65,7 @@ export class TasksService {
     const entityManager = this.ensureEntityManager(em);
     const existingTask = await entityManager.findOne(Task, {
       where: { title },
-    }); 
+    });
     if (existingTask) {
       throw new ConflictException(`Task with title ${title} already exists`);
     }

@@ -43,9 +43,9 @@ export class BoardColumnsService {
   }
 
   public async update(
+    boardId: string,
     removeColumnIds: string[] | undefined,
     updateBoardColumns: UpdateBoardColumnDto[] | undefined,
-    boardId: string,
     manager?: EntityManager,
   ) {
     let boardColumns = await this.retrieveBoardColumnsFromBoard(
