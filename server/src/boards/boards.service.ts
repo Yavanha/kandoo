@@ -49,6 +49,17 @@ export class BoardsService {
     const entityManager = this.ensureEntityManager(em);
     const board = await entityManager.findOne(Board, {
       where: { id },
+      order: {
+        columns: {
+          createdAt: 'ASC',
+          tasks: {
+            createdAt: 'ASC',
+            subtasks: {
+              createdAt: 'ASC',
+            },
+          },
+        },
+      },
       relations: {
         columns: {
           tasks: {

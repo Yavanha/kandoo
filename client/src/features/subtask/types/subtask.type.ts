@@ -12,3 +12,8 @@ export interface Subtask {
   title: string;
   isCompleted: boolean;
 }
+
+export interface UpdateSubTask {
+  id?: string;
+  title: string;
+}

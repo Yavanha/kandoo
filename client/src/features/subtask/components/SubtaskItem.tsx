@@ -15,6 +15,7 @@ export const SubtaskItem: FC<SubtaskItemProps> = ({ subtask }) => {
       <div className="flex items-center gap-x-2">
         <input
           type="checkbox"
+          id={subtask.id}
           className="checked:bg-primary"
           checked={isCompleted}
           onChange={() => {
@@ -31,7 +32,12 @@ export const SubtaskItem: FC<SubtaskItemProps> = ({ subtask }) => {
             );
           }}
         />
-        <label className="body-m text-black font-bold">{subtask.title}</label>
+        <label
+          className="body-m text-black font-bold cursor-pointer"
+          htmlFor={subtask.id}
+        >
+          {subtask.title}
+        </label>
       </div>
     </li>
   );

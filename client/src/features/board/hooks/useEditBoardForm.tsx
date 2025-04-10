@@ -49,7 +49,7 @@ export const useEditBoardForm = () => {
     list: columnFields,
   }) => {
     let columns: UpdateBoardColumn[] | null = null;
-    if (isDirtyListField) {
+    if (isDirtyListField && columnFields.length > 0) {
       columns = transformListFieldsToBoardColumnDelta(
         activeBoard.columns,
         columnFields

@@ -9,6 +9,7 @@ import {
 import { ThemeSwitch, DialogTrigger } from "@/core/components";
 import { useNavigate } from "@tanstack/react-router";
 import { useBoard } from "../hooks";
+
 type SelectBoardProps = {
   boards: Board[];
 };

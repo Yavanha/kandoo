@@ -9,3 +9,4 @@ export * from "./form/RemovableFieldList";
 export * from "./Typography/Paragraph";
 export * from "./hydrate-atoms/HydrateAtoms";
 export * from "./status-icons/TooltipStatusIcons";
+export * from "./dropdown-menu/DropdownMenu";

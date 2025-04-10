@@ -9,6 +9,7 @@ import { CreateBoardColumnDto } from './create-board-column.dto';
 import { UpdateBoardColumnDto } from './update-board-column.dto';
 import { TasksService } from 'src/tasks/tasks.service';
 import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
+import { UpdateTaskDto } from 'src/tasks/dto/update-task.dto';
 
 @Injectable()
 export class BoardColumnsService {
@@ -78,6 +79,15 @@ export class BoardColumnsService {
   public async addTaskToColumn(columnId: string, createTaskDto: CreateTaskDto) {
     const column = await this.tryToRetrieveColumnById(columnId);
     return await this.tasksService.addTaskToColumn(column, createTaskDto);
+  }
+
+  public async updateTask(
+    columnId: string,
+    taskId: string,
+    updateTaskDto: UpdateTaskDto,
+  ) {
+    await this.tryToRetrieveColumnById(columnId);
+    return this.tasksService.update(taskId, updateTaskDto);
   }
 
   private async tryToRetrieveColumnById(id: string, em?: EntityManager) {

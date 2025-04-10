@@ -10,6 +10,7 @@ import { Task } from './entities/task.entity';
 import { FindOneParam } from 'src/common/params/find-one.param';
 import { SubtasksService } from 'src/subtasks/subtasks.service';
 import { BoardColumn } from 'src/board-columns/board-column.entity';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -41,12 +42,65 @@ export class TasksService {
     await this.datasource.manager.delete(Task, id);
   }
 
+  async update(taskId: string, updateTaskDto: UpdateTaskDto) {
+    const {
+      title: updateTaskTitle,
+      description: updateTaskDescription,
+      status: updateTaskStatus,
+      subtasks: updateSubtasks,
+      removeSubtaskIds,
+    } = updateTaskDto;
+
+    if (
+      !updateTaskTitle &&
+      !updateTaskDescription &&
+      !updateTaskStatus &&
+      !updateSubtasks &&
+      !removeSubtaskIds
+    ) {
+      return await this.tryToRetrieveTaskById(taskId);
+    }
+
+    return await this.datasource.transaction(async (manager) => {
+      const task = await this.tryToRetrieveTaskById(taskId, manager);
+
+      if (updateTaskTitle && updateTaskTitle !== task.title) {
+        await this.validateUniqueTaskTitle(
+          updateTaskTitle,
+          task.columnId,
+          manager,
+        );
+        task.title = updateTaskTitle;
+      }
+
+      if (updateTaskDescription !== undefined) {
+        task.description = updateTaskDescription;
+      }
+
+      if (updateTaskStatus && updateTaskStatus !== task.status) {
+        await this.validateTaskStatusChange(task, updateTaskStatus, manager);
+        task.status = updateTaskStatus;
+      }
+
+      if (updateSubtasks || removeSubtaskIds) {
+        task.subtasks = await this.subtasksService.applySubtaskChanges(
+          taskId,
+          removeSubtaskIds,
+          updateSubtasks,
+          manager,
+        );
+      }
+
+      return await manager.save(Task, task);
+    });
+  }
+
   private async confirmTaskIntegrity(
     task: CreateTaskDto,
     column: BoardColumn,
     em?: EntityManager,
   ) {
-    await this.validateUniqueTaskTitle(task.title, em);
+    await this.validateUniqueTaskTitle(task.title, column.id, em);
     this.validateTaskStatus(task, column);
     if (task.subtasks) {
       this.subtasksService.ensureUniqueSubtaskTitle(task.subtasks);
@@ -61,10 +115,35 @@ export class TasksService {
     }
   }
 
-  private async validateUniqueTaskTitle(title: string, em?: EntityManager) {
+  private async validateTaskStatusChange(
+    task: Task,
+    newStatus: string,
+    em?: EntityManager,
+  ) {
+    const entityManager = this.ensureEntityManager(em);
+    const columnExists = await entityManager.findOne(BoardColumn, {
+      where: { title: newStatus, boardId: task.column?.boardId },
+    });
+
+    if (!columnExists) {
+      throw new ConflictException(
+        `Cannot change status to ${newStatus}. No matching column found.`,
+      );
+    }
+    if (columnExists.id === task.columnId) {
+      return;
+    }
+    task.columnId = columnExists.id;
+  }
+
+  private async validateUniqueTaskTitle(
+    title: string,
+    columnId: string,
+    em?: EntityManager,
+  ) {
     const entityManager = this.ensureEntityManager(em);
     const existingTask = await entityManager.findOne(Task, {
-      where: { title },
+      where: { title, columnId },
     });
     if (existingTask) {
       throw new ConflictException(`Task with title ${title} already exists`);

@@ -1,10 +1,10 @@
 import { FC } from "react";
-import { Subtask } from "../../tasks/types";
+
 import { SubtaskItem } from "./SubtaskItem";
+import { Subtask } from "../types";
 
 type SubtaskListProps = {
   subtasks: Subtask[];
-  onToggleCompletion: (id: string) => void;
 };
 
 export const SubtaskList: FC<SubtaskListProps> = ({ subtasks }) => {

@@ -42,9 +42,9 @@ export const Select: FC<SelectProps> = ({
       <Trigger
         aria-label="Board"
         className={classNames(
-          "flex items-center  gap-x-2 cursor-pointer user-RadixSelect-none w-full justify-between ",
+          "flex items-center  gap-x-2 cursor-pointer  justify-between ",
           {
-            "border-1 body-l border-solid border-medium-grey-25 rounded-[0.1rem] py-2 px-4 mb-6":
+            "border-1 body-l border-solid border-medium-grey-25 rounded-[0.1rem] py-2 px-4 mb-6 w-full":
               mode === "form",
             "bg-white heading-l": mode === "select",
           }

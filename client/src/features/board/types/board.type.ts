@@ -29,4 +29,6 @@ export type BoardActionMode =
   | "EDIT"
   | "DELETE"
   | "CREATE_TASK"
-  | "TASK-DETAILS";
+  | "DETAILS_TASK"
+  | "EDIT_TASK"
+  | "DELETE_TASK";

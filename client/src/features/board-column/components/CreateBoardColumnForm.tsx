@@ -8,8 +8,8 @@ import { Button, Input } from "@/core/design-system";
 import { CANCEL_LABEL_BUTTON } from "@/core/constants";
 import classNames from "classnames";
 import { useSetAtom } from "jotai";
-import { isBoardColumnCreateFormActiveAtom } from "@/features/board/store/atoms";
 import { StatusIcon } from "@/core/components/status-icons/StatusIcon";
+import { isBoardColumnCreateFormActiveAtom } from "../store";
 
 export const CreateBoardColumnForm = () => {
   const { form, onSubmit } = useCreateBoardColumnForm();

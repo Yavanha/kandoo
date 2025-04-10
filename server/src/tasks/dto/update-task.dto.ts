@@ -1,4 +1,25 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateTaskDto } from './create-task.dto';
+import { IsArray, IsOptional, IsString, IsUUID } from 'class-validator';
+import { UpdateSubtasksDto } from '../../subtasks/update-subtasks.dto';
 
-export class UpdateTaskDto extends PartialType(CreateTaskDto) {}
+export class UpdateTaskDto {
+  @IsOptional()
+  @IsString()
+  title?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsString()
+  status?: string;
+
+  @IsOptional()
+  @IsArray()
+  subtasks?: UpdateSubtasksDto[];
+
+  @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  removeSubtaskIds?: string[];
+}

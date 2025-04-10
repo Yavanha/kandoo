@@ -6,6 +6,7 @@ type DialogTriggerProps = React.DetailedHTMLProps<
   HTMLButtonElement
 > & {
   hasFlushEdges?: boolean;
+  disabled?: boolean;
   openDialog: () => void;
 } & PropsWithChildren;
 
@@ -14,14 +15,19 @@ export const DialogTrigger: FC<DialogTriggerProps> = forwardRef(
     const {
       hasFlushEdges = false,
       children,
+      disabled = false,
       openDialog: openBoardDialog,
     } = props;
     return (
       <button
         ref={ref}
-        className={classNames("flex items-center gap-x-2 cursor-pointer", {
-          "px-6  py-3": hasFlushEdges,
-        })}
+        className={classNames(
+          "flex items-center gap-x-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
+          {
+            "px-6  py-3": hasFlushEdges,
+          }
+        )}
+        disabled={disabled}
         onClick={openBoardDialog}
       >
         {children}

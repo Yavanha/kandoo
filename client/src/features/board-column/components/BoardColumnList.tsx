@@ -9,8 +9,8 @@ import { BoardColumn } from "../types";
 import { FC } from "react";
 import { CreateBoardColumnForm } from "./CreateBoardColumnForm";
 import { useAtom } from "jotai";
-import { isBoardColumnCreateFormActiveAtom } from "@/features/board/store/atoms";
 import { BoardColumnListItem } from "./BoardColumnListItem";
+import { isBoardColumnCreateFormActiveAtom } from "../store";
 
 type BoardColumnListProps = {
   list: BoardColumn[];
@@ -22,7 +22,7 @@ export const BoardColumnList: FC<BoardColumnListProps> = ({ list }) => {
 
   if (!list.length && isBoardColumnCreateFormActive) {
     return (
-      <div className="px-7 pt-4   ">
+      <div className="px-7 pt-4  max-w-[17.5rem] ">
         <CreateBoardColumnForm />
       </div>
     );
@@ -68,7 +68,7 @@ export const BoardColumnList: FC<BoardColumnListProps> = ({ list }) => {
     );
   }
   return (
-    <ul className="bg-light-grey  flex overflow-x-auto hid scrollbar-hide min-h-[80lvh] px-7 pt-4  gap-x-6">
+    <ul className="bg-light-grey  flex overflow-x-auto hid scrollbar-hide min-h-[88lvh] px-7 pt-4  gap-x-6">
       {list.map((column) => (
         <BoardColumnListItem key={column.id} column={column} />
       ))}
