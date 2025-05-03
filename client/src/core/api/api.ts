@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig, AxiosResponse } from "axios";
 import client from "./client";
 
 export async function get<T>(
@@ -14,7 +14,11 @@ export async function post<T, D>(
   data?: D,
   config?: AxiosRequestConfig
 ): Promise<T> {
-  const response = await client.post<T>(url, data, config);
+  const response = await client.post<T, AxiosResponse<T, D>, D>(
+    url,
+    data,
+    config
+  );
   return response.data;
 }
 
@@ -32,7 +36,11 @@ export async function patch<T, D>(
   data?: D,
   config?: AxiosRequestConfig
 ): Promise<T> {
-  const response = await client.patch<T>(url, data, config);
+  const response = await client.patch<T, AxiosResponse<T, D>, D>(
+    url,
+    data,
+    config
+  );
   return response.data;
 }
 

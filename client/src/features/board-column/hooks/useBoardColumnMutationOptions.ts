@@ -3,8 +3,8 @@ import { MutateOptions } from "@tanstack/query-core";
 import { AxiosError } from "axios";
 import { FieldValues, UseFormReset, UseFormSetError } from "react-hook-form";
 import { BoardColumn } from "../types";
-import { isBoardColumnCreateFormActiveAtom } from "@/features/board/store/atoms";
 import { useSetAtom } from "jotai";
+import { isBoardColumnCreateFormActiveAtom } from "../store";
 
 export const useBoardColumnMutationOptions = <D extends FieldValues>(
   reset: UseFormReset<D> | null,

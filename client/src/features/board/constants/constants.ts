@@ -16,3 +16,7 @@ export const BOARD_NAME_LABEL = "Board Name";
 export const BOARD_COLUMN_LABEL = "Board Column";
 export const BOARD_ADD_NEW_COLUMN_LABEL = "Add new Column";
 export const BOARD_PLACEHOLDER_TEXT = "e.g. Web site";
+
+// Dropdown Menu item text
+export const BOARD_DROPDOWN_MENU_EDIT_TEXT = "Edit New Board";
+export const BOARD_DROPDOWN_MENU_DELETE_TEXT = "Delete Board";

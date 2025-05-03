@@ -3,15 +3,15 @@ import { AxiosResponseError } from "@/core/types";
 import { MutateOptions } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useSetAtom } from "jotai";
-import { isOpenDialogAtom } from "@/features/board/store/atoms";
 import { Task } from "../types";
+import { closeModalAtom } from "@/widgets/app-dialog/atoms";
 
 export const useTaskMutationOptions = <T, D extends FieldValues>(
   reset: UseFormReset<D> | null,
   setError: UseFormSetError<D>,
   resetValues?: D
 ) => {
-  const setIsOpenDialog = useSetAtom(isOpenDialogAtom);
+  const closeModal = useSetAtom(closeModalAtom);
   const options: MutateOptions<
     Task,
     AxiosError<AxiosResponseError>,
@@ -22,7 +22,7 @@ export const useTaskMutationOptions = <T, D extends FieldValues>(
       if (reset && resetValues) {
         reset(resetValues);
       }
-      setIsOpenDialog(false);
+      closeModal();
     },
     onError: (error) => {
       const errorData = error.response?.data;

@@ -3,13 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
-  NotFoundException,
+  Patch,
 } from '@nestjs/common';
 import { SubtasksService } from './subtasks.service';
 import { CreateSubtaskDto } from './create-subtask.dto';
+import { FindOneParam } from 'src/common/params/find-one.param';
 import { UpdateSubtaskDto } from './update-subtask.dto';
 
 @Controller('api/subtasks')
@@ -28,28 +28,19 @@ export class SubtasksController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return await this.tryToRetrieveSubtask(id);
+    return await this.subtasksService.tryToRetrieveSubtask(id);
   }
 
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param() { id }: FindOneParam,
     @Body() updateSubtaskDto: UpdateSubtaskDto,
   ) {
-    const subTask = await this.tryToRetrieveSubtask(id);
-    return await this.subtasksService.update(subTask, updateSubtaskDto);
+    return await this.subtasksService.update(id, updateSubtaskDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') { id }: FindOneParam) {
     return await this.subtasksService.remove(id);
-  }
-
-  private async tryToRetrieveSubtask(id: string) {
-    const subTask = await this.subtasksService.findOne(id);
-    if (!subTask) {
-      throw new NotFoundException(`Subtask with id ${id} not found`);
-    }
-    return subTask;
   }
 }

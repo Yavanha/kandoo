@@ -9,6 +9,7 @@ import {
 import { ThemeSwitch, DialogTrigger } from "@/core/components";
 import { useNavigate } from "@tanstack/react-router";
 import { useBoard } from "../hooks";
+
 type SelectBoardProps = {
   boards: Board[];
 };
@@ -43,7 +44,7 @@ export const BoardSelect: FC<SelectBoardProps> = ({ boards }) => {
       isOpen={isOpenBoardSelect}
       onOpenChange={setIsOpenBoardSelect}
     >
-      <DialogTrigger hasFlushEdges openBoardDialog={triggerCreateFormDialog}>
+      <DialogTrigger hasFlushEdges openDialog={triggerCreateFormDialog}>
         <img src="/icons/icon-board.svg" alt="board icon" className="block" />
         <p className="capitalize heading-m flex items-center gap-x-0.5 text-primary">
           <span className="inline-block align-middle">+</span> Create New Board

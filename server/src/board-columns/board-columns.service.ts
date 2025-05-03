@@ -9,6 +9,7 @@ import { CreateBoardColumnDto } from './create-board-column.dto';
 import { UpdateBoardColumnDto } from './update-board-column.dto';
 import { TasksService } from 'src/tasks/tasks.service';
 import { CreateTaskDto } from 'src/tasks/dto/create-task.dto';
+import { UpdateTaskDto } from 'src/tasks/dto/update-task.dto';
 
 @Injectable()
 export class BoardColumnsService {
@@ -43,53 +44,36 @@ export class BoardColumnsService {
   }
 
   public async update(
+    boardId: string,
     removeColumnIds: string[] | undefined,
     updateBoardColumns: UpdateBoardColumnDto[] | undefined,
-    boardId: string,
     manager?: EntityManager,
   ) {
-    let boardColumns = await this.retrieveBoardColumnsFromBoard(
-      boardId,
+    let boardColumns = await this.findBoardColumnsWithBoardId(boardId, manager);
+    boardColumns = await this.deleteBoardColumnsByIds(
+      removeColumnIds,
+      boardColumns,
       manager,
     );
-    if (!removeColumnIds && !updateBoardColumns) {
-      return boardColumns;
-    }
-
-    if (removeColumnIds) {
-      boardColumns = await this.removeBoardColumns(
-        removeColumnIds,
-        boardColumns,
-        manager,
-      );
-    }
-
-    if (updateBoardColumns) {
-      boardColumns = this.refreshBoardColumns(
-        updateBoardColumns,
-        boardColumns,
-        manager,
-      );
-      this.ensureUniqueColumnTitles(boardColumns);
-    }
+    boardColumns = await this.updateBoardColumns(
+      updateBoardColumns,
+      boardColumns,
+      manager,
+    );
     return boardColumns;
   }
 
-  public async addTaskToColumn(columnId: string, createTaskDto: CreateTaskDto) {
-    const column = await this.tryToRetrieveColumnById(columnId);
-    return await this.tasksService.addTaskToColumn(column, createTaskDto);
+  private async findBoardColumnsWithBoardId(
+    boardId: string,
+    manager?: EntityManager,
+  ) {
+    const entityManager = this.ensureEntityManager(manager);
+    return await entityManager.find(BoardColumn, {
+      where: { boardId },
+    });
   }
 
-  private async tryToRetrieveColumnById(id: string, em?: EntityManager) {
-    const entityManager = this.ensureEntityManager(em);
-    const column = await entityManager.findOne(BoardColumn, { where: { id } });
-    if (!column) {
-      throw new NotFoundException(`Column with id ${id} not found`);
-    }
-    return column;
-  }
-
-  private async removeBoardColumns(
+  private async deleteBoardColumnsByIds(
     ids: string[] | undefined,
     existingBoardColumn: BoardColumn[],
     em?: EntityManager,
@@ -102,15 +86,26 @@ export class BoardColumnsService {
     return existingBoardColumn;
   }
 
-  private refreshBoardColumns(
-    updateBoardColumnsDto: UpdateBoardColumnDto[],
-    existingBoardColumn: BoardColumn[],
+  private async updateBoardColumns(
+    updateBoardColumnsDto: UpdateBoardColumnDto[] | undefined,
+    existingBoardColumns: BoardColumn[],
     em?: EntityManager,
   ) {
-    const columnMap = this.transformBoardColumnsToMap(existingBoardColumn);
+    if (!updateBoardColumnsDto) {
+      return existingBoardColumns;
+    }
+    const columnMap = this.transformBoardColumnsToMap(existingBoardColumns);
     const newColumns: BoardColumn[] = [];
+    const entityManager = this.ensureEntityManager(em);
     for (const column of updateBoardColumnsDto) {
       const { id, title } = column;
+      await this.swapTitleHandler(
+        title,
+        updateBoardColumnsDto,
+        existingBoardColumns,
+        entityManager,
+      );
+
       this.remameExistingBoardColumns(column, columnMap);
       if (!id && title) {
         const newColumn = this.createNewBoardColumn(title, em);
@@ -121,20 +116,61 @@ export class BoardColumnsService {
     return newColumns;
   }
 
+  public async addTaskToColumn(columnId: string, createTaskDto: CreateTaskDto) {
+    const column = await this.tryToRetrieveColumnById(columnId);
+    return await this.tasksService.addTaskToColumn(column, createTaskDto);
+  }
+
+  public async updateTask(
+    columnId: string,
+    taskId: string,
+    updateTaskDto: UpdateTaskDto,
+  ) {
+    await this.tryToRetrieveColumnById(columnId);
+    return this.tasksService.update(taskId, updateTaskDto);
+  }
+
+  private async tryToRetrieveColumnById(id: string, em?: EntityManager) {
+    const entityManager = this.ensureEntityManager(em);
+    const column = await entityManager.findOne(BoardColumn, { where: { id } });
+    if (!column) {
+      throw new NotFoundException(`Column with id ${id} not found`);
+    }
+    return column;
+  }
+
+  private async swapTitleHandler(
+    updateBoardColumnTitle: string | undefined,
+    updateBoardColumnsDtos: UpdateBoardColumnDto[],
+    existingBoardColumns: BoardColumn[],
+    em?: EntityManager,
+  ) {
+    if (!updateBoardColumnTitle) {
+      return;
+    }
+    const entityManager = this.ensureEntityManager(em);
+    const existingColum = existingBoardColumns.find(
+      ({ title }) => title === updateBoardColumnTitle,
+    );
+
+    if (existingColum) {
+      const existingColumWillUpdate = updateBoardColumnsDtos.find(
+        ({ id }) => id === existingColum.id,
+      );
+      if (!existingColumWillUpdate) {
+        throw new ConflictException(
+          `Board Column with the title ${updateBoardColumnTitle} already exists in the board`,
+        );
+      }
+      existingColum.title = `${updateBoardColumnTitle}-temp-data`;
+      await entityManager.save(BoardColumn, existingColum);
+    }
+  }
+
   private transformBoardColumnsToMap(columns: BoardColumn[]) {
     return new Map<string, BoardColumn>(
       columns.map((column) => [column.id, column]),
     );
-  }
-
-  private async retrieveBoardColumnsFromBoard(
-    boardId: string,
-    manager?: EntityManager,
-  ) {
-    const entityManager = this.ensureEntityManager(manager);
-    return await entityManager.find(BoardColumn, {
-      where: { boardId },
-    });
   }
 
   private remameExistingBoardColumns(

@@ -1,20 +1,19 @@
-import {
-  Content,
-  DropdownMenu,
-  Item,
-  Portal,
-  Trigger,
-} from "@radix-ui/react-dropdown-menu";
 import { useAtom, useSetAtom } from "jotai";
 import {
   isOpenBoardDropdownMenuAtom,
   triggerEditFormDialogAtom,
   triggerDeleteFormDialogAtom,
 } from "../store/atoms";
-import { DialogTrigger } from "@/core/components";
+import { DialogTrigger, DropdownMenu } from "@/core/components";
+
+import { Item } from "@radix-ui/react-dropdown-menu";
+import {
+  BOARD_DROPDOWN_MENU_EDIT_TEXT,
+  BOARD_DROPDOWN_MENU_DELETE_TEXT,
+} from "../constants";
 
 export const BoardDropdownMenu = () => {
-  const [isOpenBoardDropdownMenu, setIsOpenBoardDropdownMen] = useAtom(
+  const [isOpenBoardDropdownMenu, setIsOpenBoardDropdownMenu] = useAtom(
     isOpenBoardDropdownMenuAtom
   );
   const triggerEditFormDialog = useSetAtom(triggerEditFormDialogAtom);
@@ -22,35 +21,23 @@ export const BoardDropdownMenu = () => {
 
   return (
     <DropdownMenu
-      open={isOpenBoardDropdownMenu}
-      onOpenChange={setIsOpenBoardDropdownMen}
+      isOpen={isOpenBoardDropdownMenu}
+      onOpenChange={setIsOpenBoardDropdownMenu}
     >
-      <Trigger className="select-none cursor-pointer ">
-        <img src="/icons/icon-vertical-ellipsis.svg" alt="more options" />
-      </Trigger>
-
-      <Portal>
-        <Content
-          className="p-4 min-w-[220px] rounded-md bg-white  shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade"
-          sideOffset={25}
-          align="end"
-        >
-          <Item asChild>
-            <DialogTrigger openBoardDialog={triggerEditFormDialog}>
-              <p className="text-medium-grey body-l mb-4 cursor-pointer">
-                Edit New Board
-              </p>
-            </DialogTrigger>
-          </Item>
-          <Item>
-            <DialogTrigger openBoardDialog={triggerDeleteFormDialog}>
-              <p className="text-destructive body-l cursor-pointer">
-                Delete Board
-              </p>
-            </DialogTrigger>
-          </Item>
-        </Content>
-      </Portal>
+      <Item asChild>
+        <DialogTrigger openDialog={triggerEditFormDialog}>
+          <p className="text-medium-grey body-l mb-4 cursor-pointer">
+            {BOARD_DROPDOWN_MENU_EDIT_TEXT}
+          </p>
+        </DialogTrigger>
+      </Item>
+      <Item>
+        <DialogTrigger openDialog={triggerDeleteFormDialog}>
+          <p className="text-destructive body-l cursor-pointer">
+            {BOARD_DROPDOWN_MENU_DELETE_TEXT}
+          </p>
+        </DialogTrigger>
+      </Item>
     </DropdownMenu>
   );
 };

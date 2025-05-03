@@ -42,13 +42,24 @@ export class BoardsService {
   }
 
   public async findOne(id: string) {
-    return this.tryToRetrieveBoardById(id, this.dataSource.manager);
+    return this.tryToRetrieveBoardById(id);
   }
 
   public async tryToRetrieveBoardById(id: string, em?: EntityManager) {
     const entityManager = this.ensureEntityManager(em);
     const board = await entityManager.findOne(Board, {
       where: { id },
+      order: {
+        columns: {
+          createdAt: 'ASC',
+          tasks: {
+            createdAt: 'ASC',
+            subtasks: {
+              createdAt: 'ASC',
+            },
+          },
+        },
+      },
       relations: {
         columns: {
           tasks: {
@@ -82,12 +93,11 @@ export class BoardsService {
       }
 
       board.columns = await this.boardColumnsService.update(
+        boardId,
         removeColumnIds,
         updateBoardColumns,
-        boardId,
         manager,
       );
-
       return await manager.save(Board, board);
     });
   }
