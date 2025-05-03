@@ -98,7 +98,6 @@ export class BoardsService {
         updateBoardColumns,
         manager,
       );
-
       return await manager.save(Board, board);
     });
   }

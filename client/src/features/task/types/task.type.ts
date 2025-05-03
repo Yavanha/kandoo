@@ -33,6 +33,7 @@ export type UpdateTask = Partial<{
   description: string;
   status: string;
   subtasks: UpdateSubTask[];
+  removeSubtaskIds?: string[];
   columnId: string;
 }>;
 
@@ -45,7 +46,6 @@ export type CreateTaskMutationDataType = {
 export type UpdateTaskMutationDataType = {
   data: UpdateTask;
   boardId: string;
-  removeSubtaskIds?: string[];
 };
 
 export type TaskFormType = z.infer<typeof TaskFormSchema>;

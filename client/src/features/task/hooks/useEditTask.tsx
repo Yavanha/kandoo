@@ -13,6 +13,7 @@ export const useEditTask = () => {
     UpdateTaskMutationDataType
   >({
     mutationFn: async ({ data }) => {
+      console.log({ data });
       return await patch<Task, UpdateTask>(
         `/columns/${data.columnId}/tasks/${data.id}`,
         data

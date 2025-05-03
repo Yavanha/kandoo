@@ -57,7 +57,6 @@ export const useEditTaskForm = () => {
   }) => {
     if (!activeBoard) return;
     const { id: boardId } = activeBoard;
-
     editTaskMutation.mutate(
       {
         data: {
@@ -74,8 +73,8 @@ export const useEditTaskForm = () => {
               }
             : {}),
           columnId,
+          ...(removeSubtaskIds.length > 0 ? { removeSubtaskIds } : {}),
         },
-        ...(removeSubtaskIds.length > 0 ? { removeSubtaskIds } : {}),
         boardId,
       },
       options

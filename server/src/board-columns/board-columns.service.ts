@@ -49,31 +49,71 @@ export class BoardColumnsService {
     updateBoardColumns: UpdateBoardColumnDto[] | undefined,
     manager?: EntityManager,
   ) {
-    let boardColumns = await this.retrieveBoardColumnsFromBoard(
-      boardId,
+    let boardColumns = await this.findBoardColumnsWithBoardId(boardId, manager);
+    boardColumns = await this.deleteBoardColumnsByIds(
+      removeColumnIds,
+      boardColumns,
       manager,
     );
-    if (!removeColumnIds && !updateBoardColumns) {
-      return boardColumns;
-    }
-
-    if (removeColumnIds) {
-      boardColumns = await this.removeBoardColumns(
-        removeColumnIds,
-        boardColumns,
-        manager,
-      );
-    }
-
-    if (updateBoardColumns) {
-      boardColumns = this.refreshBoardColumns(
-        updateBoardColumns,
-        boardColumns,
-        manager,
-      );
-      this.ensureUniqueColumnTitles(boardColumns);
-    }
+    boardColumns = await this.updateBoardColumns(
+      updateBoardColumns,
+      boardColumns,
+      manager,
+    );
     return boardColumns;
+  }
+
+  private async findBoardColumnsWithBoardId(
+    boardId: string,
+    manager?: EntityManager,
+  ) {
+    const entityManager = this.ensureEntityManager(manager);
+    return await entityManager.find(BoardColumn, {
+      where: { boardId },
+    });
+  }
+
+  private async deleteBoardColumnsByIds(
+    ids: string[] | undefined,
+    existingBoardColumn: BoardColumn[],
+    em?: EntityManager,
+  ) {
+    if (ids) {
+      const entityManager = this.ensureEntityManager(em);
+      await entityManager.delete(BoardColumn, ids);
+      return existingBoardColumn.filter((column) => !ids.includes(column.id));
+    }
+    return existingBoardColumn;
+  }
+
+  private async updateBoardColumns(
+    updateBoardColumnsDto: UpdateBoardColumnDto[] | undefined,
+    existingBoardColumns: BoardColumn[],
+    em?: EntityManager,
+  ) {
+    if (!updateBoardColumnsDto) {
+      return existingBoardColumns;
+    }
+    const columnMap = this.transformBoardColumnsToMap(existingBoardColumns);
+    const newColumns: BoardColumn[] = [];
+    const entityManager = this.ensureEntityManager(em);
+    for (const column of updateBoardColumnsDto) {
+      const { id, title } = column;
+      await this.swapTitleHandler(
+        title,
+        updateBoardColumnsDto,
+        existingBoardColumns,
+        entityManager,
+      );
+
+      this.remameExistingBoardColumns(column, columnMap);
+      if (!id && title) {
+        const newColumn = this.createNewBoardColumn(title, em);
+        newColumns.push(newColumn);
+      }
+    }
+    newColumns.unshift(...columnMap.values());
+    return newColumns;
   }
 
   public async addTaskToColumn(columnId: string, createTaskDto: CreateTaskDto) {
@@ -99,52 +139,38 @@ export class BoardColumnsService {
     return column;
   }
 
-  private async removeBoardColumns(
-    ids: string[] | undefined,
-    existingBoardColumn: BoardColumn[],
+  private async swapTitleHandler(
+    updateBoardColumnTitle: string | undefined,
+    updateBoardColumnsDtos: UpdateBoardColumnDto[],
+    existingBoardColumns: BoardColumn[],
     em?: EntityManager,
   ) {
-    if (ids) {
-      const entityManager = this.ensureEntityManager(em);
-      await entityManager.delete(BoardColumn, ids);
-      return existingBoardColumn.filter((column) => !ids.includes(column.id));
+    if (!updateBoardColumnTitle) {
+      return;
     }
-    return existingBoardColumn;
-  }
+    const entityManager = this.ensureEntityManager(em);
+    const existingColum = existingBoardColumns.find(
+      ({ title }) => title === updateBoardColumnTitle,
+    );
 
-  private refreshBoardColumns(
-    updateBoardColumnsDto: UpdateBoardColumnDto[],
-    existingBoardColumn: BoardColumn[],
-    em?: EntityManager,
-  ) {
-    const columnMap = this.transformBoardColumnsToMap(existingBoardColumn);
-    const newColumns: BoardColumn[] = [];
-    for (const column of updateBoardColumnsDto) {
-      const { id, title } = column;
-      this.remameExistingBoardColumns(column, columnMap);
-      if (!id && title) {
-        const newColumn = this.createNewBoardColumn(title, em);
-        newColumns.push(newColumn);
+    if (existingColum) {
+      const existingColumWillUpdate = updateBoardColumnsDtos.find(
+        ({ id }) => id === existingColum.id,
+      );
+      if (!existingColumWillUpdate) {
+        throw new ConflictException(
+          `Board Column with the title ${updateBoardColumnTitle} already exists in the board`,
+        );
       }
+      existingColum.title = `${updateBoardColumnTitle}-temp-data`;
+      await entityManager.save(BoardColumn, existingColum);
     }
-    newColumns.unshift(...columnMap.values());
-    return newColumns;
   }
 
   private transformBoardColumnsToMap(columns: BoardColumn[]) {
     return new Map<string, BoardColumn>(
       columns.map((column) => [column.id, column]),
     );
-  }
-
-  private async retrieveBoardColumnsFromBoard(
-    boardId: string,
-    manager?: EntityManager,
-  ) {
-    const entityManager = this.ensureEntityManager(manager);
-    return await entityManager.find(BoardColumn, {
-      where: { boardId },
-    });
   }
 
   private remameExistingBoardColumns(
